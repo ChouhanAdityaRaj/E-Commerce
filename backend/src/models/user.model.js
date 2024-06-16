@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema({
     fullName: {
         type: String,
         required: true,
-        index: true,
         trim: true
     },
     email: {
@@ -22,11 +21,16 @@ const userSchema = new mongoose.Schema({
         required: [true, "Password is required"],
     },
     isAdmin: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     refreshToken: {
         type: String
-    }
+    },
+    isBlacklist: {
+        type: Boolean,
+        default: false
+    },
 }, {timestamps: true});
 
 
