@@ -18,7 +18,10 @@ const signupSchema = z.object({
 });
 
 const loginSchema = z.object({
-  email: z.string({ required_error: "All fields are required" }).trim(),
+  email: z
+    .string({ required_error: "All fields are required" })
+    .trim()
+    .email({ message: "Invalid email address." }),
 
   password: z.string({ required_error: "All fields are required" }),
 });
