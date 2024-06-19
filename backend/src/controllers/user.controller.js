@@ -153,4 +153,10 @@ const changeFullName = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updatedUser, "Full name updated successfully"));
 });
 
-export { signup, login, logout, refreshAccessToken, changeFullName };
+const getCurrentUser = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "Current user fetched successfully"));
+});
+
+export { signup, login, logout, refreshAccessToken, changeFullName, getCurrentUser };
