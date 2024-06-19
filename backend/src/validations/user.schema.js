@@ -14,7 +14,10 @@ const signupSchema = z.object({
 
   password: z
     .string({ required_error: "Password is required" })
-    .min(8, { message: "Password must be at lest of 8 characters." }),
+    .trim()
+    .min(8, { message: "Password must be at lest of 8 characters." })
+    .refine((str) => !str.includes(" "), {message: "Password must not contain any whitespace"}),
+
 });
 
 const loginSchema = z.object({
@@ -23,7 +26,11 @@ const loginSchema = z.object({
     .trim()
     .email({ message: "Invalid email address." }),
 
-  password: z.string({ required_error: "All fields are required" }),
+  password: z
+    .string({ required_error: "All fields are required" })
+    .trim()
+    .min(8, { message: "Password must be at lest of 8 characters." })
+    .refine((str) => !str.includes(" "), {message: "Password must not contain any whitespace"}),
 });
 
 const changeFullNameSchema = z.object({
@@ -34,4 +41,24 @@ const changeFullNameSchema = z.object({
     .max(45, { message: "Name must not be more than 45 characters." }),
 });
 
-export { signupSchema, loginSchema, changeFullNameSchema };
+const changePasswordSchema = z.object({
+  oldPassword: z
+    .string({required_error: "All fields are required"})
+    .trim()
+    .min(8, { message: "Password must be at lest of 8 characters." })
+    .refine((str) => !str.includes(" "), {message: "Password must not contain any whitespace"}),
+
+  newPassword:  z
+    .string({required_error: "All fields are required"})
+    .trim()
+    .min(8, { message: "Password must be at lest of 8 characters." })
+    .refine((str) => !str.includes(" "), {message: "Password must not contain any whitespace"}),
+
+  conformPassword:  z
+    .string({required_error: "All fields are required"})
+    .trim()
+    .min(8, { message: "Password must be at lest of 8 characters." })
+    .refine((str) => !str.includes(" "), {message: "Password must not contain any whitespace"}),
+})
+
+export { signupSchema, loginSchema, changeFullNameSchema, changePasswordSchema };
