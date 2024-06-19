@@ -162,6 +162,10 @@ const changePassword = asyncHandler(async (req, res) => {
     throw new ApiError(400, "new password and conform password not match");
   }
 
+  if(oldPassword === newPassword){
+    throw new ApiError(400, "new password must be differnet from old password");
+  }
+
   const user = await User.findById(req.user?._id);
 
   const isOldPasswordCorrect = await user.isPasswordCorrect(oldPassword);

@@ -29,7 +29,6 @@ const loginSchema = z.object({
   password: z
     .string({ required_error: "All fields are required" })
     .trim()
-    .min(8, { message: "Password must be at lest of 8 characters." })
     .refine((str) => !str.includes(" "), {message: "Password must not contain any whitespace"}),
 });
 
