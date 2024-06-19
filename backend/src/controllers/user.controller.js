@@ -144,10 +144,6 @@ const changeFullName = asyncHandler(async (req, res) => {
     }
   ).select("-password -refreshToken -isBlacklist -isAdmin");
 
-  if (!updatedUser) {
-    throw new ApiError(500, "Problem while updating full name");
-  }
-
   return res
     .status(200)
     .json(new ApiResponse(200, updatedUser, "Full name updated successfully"));
@@ -159,4 +155,27 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, req.user, "Current user fetched successfully"));
 });
 
-export { signup, login, logout, refreshAccessToken, changeFullName, getCurrentUser };
+const changePassword = asyncHandler(async (req, res) => {
+  const {oldPassword, newPassword, conformPassword} = req.body;
+
+  if(newPassword !== conformPassword){
+    throw new ApiError(400, "new password and conform password not match");
+  }
+
+  const user = await User.findById(req.user?._id);
+
+  const isOldPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+  if(!isOldPasswordCorrect) {
+    throw new ApiError(400, "Invalid old password")
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password changed successfully"))
+});
+
+export { signup, login, logout, refreshAccessToken, changeFullName, getCurrentUser, changePassword };
