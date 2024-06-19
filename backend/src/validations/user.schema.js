@@ -26,4 +26,12 @@ const loginSchema = z.object({
   password: z.string({ required_error: "All fields are required" }),
 });
 
-export { signupSchema, loginSchema };
+const changeFullNameSchema = z.object({
+  fullName: z
+    .string({ required_error: "fullName is required" })
+    .trim()
+    .min(3, { message: "Name must be at lest of 3 characters." })
+    .max(45, { message: "Name must not be more than 45 characters." }),
+});
+
+export { signupSchema, loginSchema, changeFullNameSchema };
