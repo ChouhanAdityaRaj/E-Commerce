@@ -26,11 +26,7 @@ const userSchema = new mongoose.Schema({
     },
     refreshToken: {
         type: String
-    },
-    isBlacklist: {
-        type: Boolean,
-        default: false
-    },
+    }
 }, {timestamps: true});
 
 
