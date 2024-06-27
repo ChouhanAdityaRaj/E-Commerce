@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const quantitySchema = new mongoose.Schema({
+const stocksSchema = new mongoose.Schema({
   size: {
     type: String,
     required: true,
@@ -17,11 +17,11 @@ const productSchema = new mongoose.Schema({
       required: true,
       trim: true,
     },
-    image: {
+    productImage: {
       type: String,
       required: true,
     },
-    otherImage: [
+    otherProductImages: [
       {
         type: String,
       },
@@ -35,7 +35,7 @@ const productSchema = new mongoose.Schema({
       required: true,
       index: true
     },
-    quantity: [quantitySchema],
+    stock: [stocksSchema],
     discount: {
       type: Number,
       default: 0,

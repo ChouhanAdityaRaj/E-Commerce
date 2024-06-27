@@ -1,5 +1,10 @@
 import { v2 as cloudinary } from "cloudinary";
+import dotenv from "dotenv";
 import fs from "fs";
+
+dotenv.config({
+    path: "./.env"
+});
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -13,7 +18,7 @@ const uploadOnCloudinary = async (localFilePath) => {
 
     const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
-      folder: process.env.CLOUDINARY_FOLDER_NAME,
+      folder: process.env.CLOUDINARY_FOLDER_NAME
     });
 
     fs.unlinkSync(localFilePath);
