@@ -1,7 +1,9 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
+import { Product } from "../models/product.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js"
+import { uploadOnCloudinary} from "../utils/uploadOnCloudinary.js";
 
 const getAllUser = asyncHandler(async (req, res) => {
     const {page=1, limit=10, sortBy, sortType=1} = req.query;
@@ -61,6 +63,67 @@ const getAllUser = asyncHandler(async (req, res) => {
     ));
 });
 
+const addNewProduct = asyncHandler(async (req, res) => {
+    const {productName, description, price, stock} = req.body;
+
+
+    // Handling Product Image 
+    const productImageLocalPath = req.files?.productImage?.length > 0 ? req.files?.productImage[0]?.path : undefined ;
+
+    if(!productImageLocalPath){
+        throw new ApiError(400, "Product image is required");
+    }
+    
+    const productImage = await uploadOnCloudinary(productImageLocalPath);
+    
+    if(!productImage){
+        throw new ApiError(500, "Problem while uploading product image");
+    }
+    
+    
+    //Handling Product Other Images    
+    const otherProductImagesFile = req.files?.productOtherImages?.length > 0 ? req.files?.productOtherImages : undefined;
+
+    let otherProductImages = [];
+
+    if(otherProductImagesFile){
+        for (const img of otherProductImagesFile) {
+            const uplodedImage = await uploadOnCloudinary(img.path);
+
+            if(!uploadOnCloudinary){
+                throw new ApiError(500, "Problem while upload product other image");
+            }
+
+            otherProductImages.push(uplodedImage?.url);
+        }
+    }
+
+
+    // Create product in DB 
+    const product = await Product.create({
+        productName,
+        productImage: productImage?.url,
+        otherProductImages,
+        description,
+        price,
+        stock,
+    });
+
+
+    if(!product){
+        throw new ApiError(500, "Problem while add new product");
+    }
+    
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            product,
+            "Product added successfully"
+        ))
+});
+
 export {
     getAllUser,
+    addNewProduct
 }
