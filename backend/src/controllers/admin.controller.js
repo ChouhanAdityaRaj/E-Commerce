@@ -4,6 +4,7 @@ import { Product } from "../models/product.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { uploadOnCloudinary} from "../utils/uploadOnCloudinary.js";
+import { updateProductDetailsSchema } from "../validations/admin.schema.js";
 
 const getAllUser = asyncHandler(async (req, res) => {
     const {page=1, limit=10, sortBy, sortType=1} = req.query;
@@ -123,7 +124,44 @@ const addNewProduct = asyncHandler(async (req, res) => {
         ))
 });
 
+const updateProductDetails = asyncHandler(async (req, res) => {
+    const { productid } = req.params;
+    const { productName, description, price } = req.body;
+
+    if(!(productName || description || price)){
+        throw new ApiError(400, "Atleast one field is required")
+    }
+
+    const updates = {}; 
+
+    for(const val of ["productName", "description", "price"]){
+        if(req.body[val] !== undefined){
+            updates[val] = req.body[val]; 
+        }
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+        productid,
+        updates,
+        {new: true}
+    );
+
+    if(!updatedProduct){
+         throw new ApiError(500, "Problem while updating product details");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            updatedProduct,
+            "Product updated successfully"
+        ))
+
+});
+
 export {
     getAllUser,
-    addNewProduct
+    addNewProduct,
+    updateProductDetails
 }

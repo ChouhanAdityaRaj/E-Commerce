@@ -29,4 +29,25 @@ const addNewProductSchema = z.object({
   stock: z.array(stockSchema, {message: "Stock is required"}),
 });
 
-export { addNewProductSchema };
+
+const updateProductDetailsSchema = z.object({
+  productName: z
+    .string()
+    .trim()
+    .min(3, { message: "Product name must be at lest of 8 characters." })
+    .max(30, { message: "Product name must not be more than 30 characters." })
+    .optional(),
+
+  description: z
+    .string()
+    .trim()
+    .max(150, { message: "Description must not be more than 150 characters." })
+    .optional(),
+
+  price:  z.preprocess(
+    (val) => parseInt(val, 10), 
+    z.number({invalid_type_error: "Price must be number"}).positive({message: "Price must be posative number"})
+  ).optional(),
+});
+
+export { addNewProductSchema, updateProductDetailsSchema };

@@ -144,6 +144,10 @@ const changeFullName = asyncHandler(async (req, res) => {
     }
   ).select("-password -refreshToken -isBlacklist -isAdmin");
 
+  if(!updatedUser){
+    throw new ApiError(500, "Problem while updating user full name");
+}
+
   return res
     .status(200)
     .json(new ApiResponse(200, updatedUser, "Full name updated successfully"));
