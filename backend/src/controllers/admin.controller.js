@@ -4,7 +4,8 @@ import { Product } from "../models/product.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { uploadOnCloudinary} from "../utils/uploadOnCloudinary.js";
-import { updateProductDetailsSchema } from "../validations/admin.schema.js";
+import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
+import fs from "fs";
 
 const getAllUser = asyncHandler(async (req, res) => {
     const {page=1, limit=10, sortBy, sortType=1} = req.query;
@@ -160,8 +161,51 @@ const updateProductDetails = asyncHandler(async (req, res) => {
 
 });
 
+const updateProductImage = asyncHandler(async (req, res) => {
+    const { productid } = req.params;
+
+    const productImageLocalPath = req.file ? req.file.path : undefined;
+
+    if(!productImageLocalPath){
+        throw new ApiError(400, "Product image is required");
+    }
+
+    const product = await Product.findById(productid);
+
+    if(!product){
+        fs.unlinkSync(productImageLocalPath);
+        throw new ApiError(404, "Product not exist");
+    }
+
+    
+    const newProductImage = await uploadOnCloudinary(productImageLocalPath);
+    
+    if(!newProductImage){
+        throw new ApiError(500, "Problem while uploading product image")
+    }
+    
+    const deletePreviousImage = await deleteFromCloudinary(product.productImage);
+
+    if(!deletePreviousImage){
+        throw new ApiError(500, "Problem while deleting old product image");
+    }
+
+
+    product.productImage = newProductImage.url;
+    await product.save();
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            product,
+            "Product image updated successfully"
+        ));
+});
+
 export {
     getAllUser,
     addNewProduct,
-    updateProductDetails
+    updateProductDetails,
+    updateProductImage
 }
