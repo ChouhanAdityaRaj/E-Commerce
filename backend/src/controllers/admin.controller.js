@@ -65,12 +65,14 @@ const getAllUser = asyncHandler(async (req, res) => {
     ));
 });
 
+
+// Admin Product Controllers
 const addNewProduct = asyncHandler(async (req, res) => {
     const {productName, description, price, stock} = req.body;
 
 
     // Handling Product Image 
-    const productImageLocalPath = req.files?.productImage?.length > 0 ? req.files?.productImage[0]?.path : undefined ;
+    const productImageLocalPath = req?.files?.productImage?.length > 0 ? req.files?.productImage[0]?.path : undefined ;
 
     if(!productImageLocalPath){
         throw new ApiError(400, "Product image is required");
@@ -203,9 +205,55 @@ const updateProductImage = asyncHandler(async (req, res) => {
         ));
 });
 
+const updateAddOtherProductImages = asyncHandler(async (req, res) => {
+    const { productid } = req.params;
+    const productOtherImagesFile = req?.files?.productOtherImages?.length > 0 ? req.files.productOtherImages : undefined;
+
+    if(!productOtherImagesFile){
+        throw new ApiError("Image is required")
+    }
+
+    const product = await Product.findById(productid);
+
+    if(!product){
+        productOtherImagesFile.forEach((img) => {
+            fs.unlinkSync(img.path);
+        });
+        throw new ApiError(404, "Product not exist");
+    }
+
+    if((product.otherProductImages.length + productOtherImagesFile.length) > 5){
+        productOtherImagesFile.forEach((img) => {
+            fs.unlinkSync(img.path);
+        });
+        throw new ApiError(400, "Don't have more than 5 product other images")
+    }
+
+    for(const img of productOtherImagesFile){
+        const uplodedImage = await uploadOnCloudinary(img.path);
+
+        if(!uplodedImage){
+            throw new ApiError(500, "Problem while uploading product other image on cloudinary");
+        }
+
+        product.otherProductImages.push(uplodedImage.url);
+    };
+
+    await product.save();
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            product,
+            "Product other images uploded successfully"
+        ));
+}); 
+
 export {
     getAllUser,
     addNewProduct,
     updateProductDetails,
-    updateProductImage
+    updateProductImage,
+    updateAddOtherProductImages
 }
