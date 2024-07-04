@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { getAllUser, addNewProduct, updateProductDetails, updateProductImage, updateAddOtherProductImages } from "../controllers/admin.controller.js";
+import { getAllUser, addNewProduct, updateProductDetails, updateProductImage, addOtherProductImages, deleteOtherProductImage } from "../controllers/admin.controller.js";
 import { verifyAdmin } from "../middlewares/verifyAdmin.middleware.js";
 import { addNewProductSchema, updateProductDetailsSchema } from "../validations/admin.schema.js";
 import { validate } from "../middlewares/validate.middleware.js";
@@ -30,6 +30,7 @@ router.route("/add-new-product").post(
 
 router.route("/product/:productid/details").patch(validate(updateProductDetailsSchema), updateProductDetails)
 router.route("/product/:productid/image").patch(upload.single("productImage"), updateProductImage);
-router.route("/product/:productid/other-image").patch(upload.fields([{name: "productOtherImages", maxCount: 5}]), updateAddOtherProductImages);
+router.route("/product/:productid/other-image").patch(upload.fields([{name: "productOtherImages", maxCount: 5}]), addOtherProductImages);
+router.route("/product/:productid/other-image").delete(deleteOtherProductImage);
 
 export default router;

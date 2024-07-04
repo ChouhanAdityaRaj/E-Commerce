@@ -6,6 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { uploadOnCloudinary} from "../utils/uploadOnCloudinary.js";
 import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
 import fs from "fs";
+import mongoose, { mongo } from "mongoose";
 
 const getAllUser = asyncHandler(async (req, res) => {
     const {page=1, limit=10, sortBy, sortType=1} = req.query;
@@ -98,7 +99,7 @@ const addNewProduct = asyncHandler(async (req, res) => {
                 throw new ApiError(500, "Problem while upload product other image");
             }
 
-            otherProductImages.push(uplodedImage?.url);
+            otherProductImages.push({image: uplodedImage?.url});
         }
     }
 
@@ -205,7 +206,7 @@ const updateProductImage = asyncHandler(async (req, res) => {
         ));
 });
 
-const updateAddOtherProductImages = asyncHandler(async (req, res) => {
+const addOtherProductImages = asyncHandler(async (req, res) => {
     const { productid } = req.params;
     const productOtherImagesFile = req?.files?.productOtherImages?.length > 0 ? req.files.productOtherImages : undefined;
 
@@ -236,7 +237,7 @@ const updateAddOtherProductImages = asyncHandler(async (req, res) => {
             throw new ApiError(500, "Problem while uploading product other image on cloudinary");
         }
 
-        product.otherProductImages.push(uplodedImage.url);
+        product.otherProductImages.push({image: uplodedImage.url});
     };
 
     await product.save();
@@ -250,10 +251,54 @@ const updateAddOtherProductImages = asyncHandler(async (req, res) => {
         ));
 }); 
 
+const deleteOtherProductImage = asyncHandler(async (req, res) => {
+    const {productid} = req.params;
+    const { idList } = req.body;
+
+    if(idList?.length <= 0){
+        throw new ApiError(400, "id list is required")
+    }
+
+    const product = await Product.findById(productid);
+
+    if(!product){
+        throw new ApiError(404, "Product not exist");
+    }
+
+    for(const id of idList){
+        const index = product.otherProductImages.findIndex(el =>el._id.toString() === id);
+
+        if(index === -1){
+            throw new ApiError(400, "Image not found")
+        }
+
+        const image = product.otherProductImages[index];
+        
+        const deletedImage = await deleteFromCloudinary(image?.image);
+
+        if(!deletedImage){
+            throw new ApiError(500, "Problem while deleting image")
+        }
+
+        product.otherProductImages.splice(index, 1);
+    }
+
+    await product.save();
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            product,
+            "Product other images deleted successfully"
+        ));
+});
+
 export {
     getAllUser,
     addNewProduct,
     updateProductDetails,
     updateProductImage,
-    updateAddOtherProductImages
+    addOtherProductImages,
+    deleteOtherProductImage
 }

@@ -1,5 +1,11 @@
 import mongoose from "mongoose";
 
+const productOtherImageSchema = new mongoose.Schema({
+  image: {
+    type: String
+  }
+})
+
 const stocksSchema = new mongoose.Schema({
   size: {
     type: String,
@@ -21,11 +27,7 @@ const productSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    otherProductImages: [
-      {
-        type: String,
-      },
-    ],
+    otherProductImages: [productOtherImageSchema],
     description: {
       type: String,
       required: true,
