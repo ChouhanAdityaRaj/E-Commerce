@@ -294,11 +294,50 @@ const deleteOtherProductImage = asyncHandler(async (req, res) => {
         ));
 });
 
+const updateStock = asyncHandler(async (req, res) => {
+    const { productid } = req.params;
+    const { stocks } = req.body;
+
+    const product = await Product.findById(productid);
+    
+    if(!product){
+        throw new ApiError(404, "Product not exist");
+    }
+    
+    for (const stock of stocks) {
+        const index = product.stock.findIndex((el) => el.size === stock.size);
+
+        if(index === -1){
+            product.stock.push(stock);
+            continue;
+        }
+
+        if(product.stock[index].quantity + stock.quantity < 0){
+            throw new ApiError(400, "You can't decrease quantity less then 0");
+        }
+
+        product.stock[index].quantity += stock.quantity;
+
+    }
+
+    await product.save();
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            product.stock,
+            "Stock updated successfully"
+        ))
+
+});
+
 export {
     getAllUser,
     addNewProduct,
     updateProductDetails,
     updateProductImage,
     addOtherProductImages,
-    deleteOtherProductImage
+    deleteOtherProductImage,
+    updateStock
 }
