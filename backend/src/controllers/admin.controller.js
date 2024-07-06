@@ -6,7 +6,6 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { uploadOnCloudinary} from "../utils/uploadOnCloudinary.js";
 import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
 import fs from "fs";
-import mongoose, { mongo } from "mongoose";
 
 const getAllUser = asyncHandler(async (req, res) => {
     const {page=1, limit=10, sortBy, sortType=1} = req.query;
@@ -332,6 +331,47 @@ const updateStock = asyncHandler(async (req, res) => {
 
 });
 
+const deleteProduct = asyncHandler(async (req, res) => {
+    const { productid } = req.params;
+
+    const product = await Product.findById(productid);
+
+    if(!product){
+        throw new ApiError(404, "Product not exist");
+    }
+
+    const deletedProductImage = await deleteFromCloudinary(product?.productImage);
+
+    if(!deletedProductImage){
+        throw new ApiError(500, "Problem while deleting product image");
+    }
+
+    if(product.otherProductImages?.length > 0){
+        product.otherProductImages.forEach(async (img) => {
+            const deletedotherProductImage = await deleteFromCloudinary(img?.image);
+
+            if(!deletedotherProductImage){
+                throw new ApiError(500, "Problem while deleting product other image");
+            }
+        });
+    }
+
+    const deletedProduct = await Product.findByIdAndDelete(productid);
+
+    if(!deletedProduct){
+        throw new ApiError(500, "Problem while deleting product");
+    }
+
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            {},
+            "Product deleted successfully"
+        ))
+});
+
 export {
     getAllUser,
     addNewProduct,
@@ -339,5 +379,6 @@ export {
     updateProductImage,
     addOtherProductImages,
     deleteOtherProductImage,
-    updateStock
+    updateStock,
+    deleteProduct
 }
