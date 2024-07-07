@@ -45,6 +45,46 @@ const createReview = asyncHandler(async (req, res) => {
         ));
 });
 
+
+const updateReview = asyncHandler(async (req, res) => {
+    const { reviewid } = req.params;
+    const { content, rating } = req.body;
+
+    if(!(content || rating)){
+        throw new ApiError(400, "Atlest one field is required")
+    }
+
+    const review = await Review.findById(reviewid);
+
+    if(!review){
+        throw new ApiError(404, "Review not exist");
+    }
+
+    if(req.user?._id.toString() !== review.user.toString()){
+        throw new ApiError(401, "Only publisher can update");
+    }
+
+    if(content){
+        review.content = content;
+    }
+
+    if(rating){
+        review.rating = rating;
+    }
+
+    await review.save();
+ 
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            review,
+            "Review updated successfully"
+        ));
+
+});
+
 export {
     createReview,
+    updateReview
 }
