@@ -49,7 +49,7 @@ const updateProductDetailsSchema = z.object({
   productName: z
     .string()
     .trim()
-    .min(3, { message: "Product name must be at lest of 8 characters." })
+    .min(3, { message: "Product name must be at lest of 3 characters." })
     .max(30, { message: "Product name must not be more than 30 characters." })
     .optional(),
 
