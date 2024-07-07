@@ -5,6 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { uploadOnCloudinary} from "../utils/uploadOnCloudinary.js";
 import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
+import { Review } from "../models/review.model.js";
 import fs from "fs";
 
 const getAllUser = asyncHandler(async (req, res) => {
@@ -354,6 +355,12 @@ const deleteProduct = asyncHandler(async (req, res) => {
                 throw new ApiError(500, "Problem while deleting product other image");
             }
         });
+    }
+
+    const deletedReview = await Review.deleteMany({product: product._id});
+
+    if(!deletedReview){
+        throw new ApiError(500, "Problem while deleting review");
     }
 
     const deletedProduct = await Product.findByIdAndDelete(productid);
