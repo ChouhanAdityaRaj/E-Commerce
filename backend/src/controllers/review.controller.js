@@ -84,7 +84,36 @@ const updateReview = asyncHandler(async (req, res) => {
 
 });
 
+const deleteReview = asyncHandler(async (req, res) => {
+    const { reviewid } = req.params;
+
+    const review = await Review.findById(reviewid);
+
+    if(!review){
+        throw new ApiError(404, "Review not exist");
+    }
+
+    if(req.user?._id.toString() !== review.user.toString()){
+        throw new ApiError(401, "Only publisher can update");
+    }
+
+    const deletedReview = await Review.findByIdAndDelete(reviewid);
+
+    if(!deletedReview){
+        throw new ApiError(500, "Problem while deleting review");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            {},
+            "Review deleted successfully"
+        ))
+});
+
 export {
     createReview,
-    updateReview
+    updateReview,
+    deleteReview
 }
