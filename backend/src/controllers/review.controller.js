@@ -148,6 +148,10 @@ const getReviewById = asyncHandler(async (req, res) => {
         }
     ]);
 
+    if(!review){
+        throw new ApiError(500, "Problem while fetching review")
+    }
+
     if(review?.length <= 0){
         throw new ApiError(404, "Review not exist")
     }
@@ -168,7 +172,88 @@ const getReviewById = asyncHandler(async (req, res) => {
 });
 
 const getProductReviews = asyncHandler(async (req, res) => {
-    
+    const { productid } = req.params;
+    const { page=1, limit=10, sortBy, sortType=1 } = req.query;
+
+    const product = await Product.findById(productid);
+
+    if(!product){
+        throw new ApiError(404, "Product not exist");
+    }
+
+
+    const pipeline = [
+        {
+            $match:{
+                product: new  mongoose.Types.ObjectId(`${productid}`),
+            }
+        },
+        {
+            $lookup:{
+                from: "users",
+                localField: "user",
+                foreignField: "_id",
+                as: "user",
+                pipeline: [
+                    {
+                        $project:{
+                            fullName: 1,
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                user: {
+                    $first: "$user"
+                }
+            }
+        },        
+    ];
+
+    if(sortBy === "createdAt"){
+        pipeline.push(
+            {
+                $sort: {
+                    createdAt: +sortType
+                }
+            }
+        )
+    }
+    if(sortBy === "rating"){
+        pipeline.push(
+            {
+                $sort: {
+                    rating: +sortType
+                }
+            }
+        )
+    }
+
+    pipeline.push(
+        {
+            $limit: +page * +limit
+        },
+        {
+            $skip: +page * +limit - +limit
+
+        }
+    )
+
+    const reviews = await Review.aggregate(pipeline);
+
+    if(!reviews){
+        throw new ApiError(500, "Problem while fetching product reviews")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            reviews,
+            "Product reviews fetched successfully"
+        ));
 })
 
 export {
