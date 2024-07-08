@@ -6,7 +6,6 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { uploadOnCloudinary} from "../utils/uploadOnCloudinary.js";
 import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
 import { Review } from "../models/review.model.js";
-import fs from "fs";
 
 const getAllUser = asyncHandler(async (req, res) => {
     const {page=1, limit=10, sortBy, sortType=1} = req.query;
@@ -176,7 +175,6 @@ const updateProductImage = asyncHandler(async (req, res) => {
     const product = await Product.findById(productid);
 
     if(!product){
-        fs.unlinkSync(productImageLocalPath);
         throw new ApiError(404, "Product not exist");
     }
 
@@ -217,17 +215,11 @@ const addOtherProductImages = asyncHandler(async (req, res) => {
     const product = await Product.findById(productid);
 
     if(!product){
-        productOtherImagesFile.forEach((img) => {
-            fs.unlinkSync(img.path);
-        });
         throw new ApiError(404, "Product not exist");
     }
 
     if((product.otherProductImages.length + productOtherImagesFile.length) > 5){
-        productOtherImagesFile.forEach((img) => {
-            fs.unlinkSync(img.path);
-        });
-        throw new ApiError(400, "Don't have more than 5 product other images")
+        throw new ApiError(400, `Don't have more than 5 review images. You already have ${product.otherProductImages.length} And upload ${productOtherImagesFile.length}`)
     }
 
     for(const img of productOtherImagesFile){
@@ -263,6 +255,10 @@ const deleteOtherProductImage = asyncHandler(async (req, res) => {
 
     if(!product){
         throw new ApiError(404, "Product not exist");
+    }
+
+    if(product.otherProductImages.length === 0){
+        throw new ApiError(404, "There is no product images")
     }
 
     for(const id of idList){

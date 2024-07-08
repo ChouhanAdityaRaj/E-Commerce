@@ -1,10 +1,17 @@
 import mongoose from "mongoose";
 
+const reviewImageSchema = new mongoose.Schema({
+    image: {
+      type: String
+    }
+  })
+
 const reviewSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
+    images: [reviewImageSchema],
     content: {
         type: String,
         required: true
