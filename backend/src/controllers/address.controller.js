@@ -74,7 +74,36 @@ const updateAddress = asyncHandler(async (req, res) => {
         ));
 });
 
+const deleteAddress = asyncHandler(async (req, res) => {
+    const { addressid } = req.params;
+
+    const address = await Address.findById(addressid);
+
+    if(!address){
+        throw new ApiError(404, "Address not exist");
+    }
+
+    if(address?.user.toString() !== req.user?._id.toString()){
+        throw new ApiError(401, "Only creator can delete");
+    } 
+
+    const deletedAddress = await Address.findByIdAndDelete(addressid);
+
+    if(!deleteAddress){
+        throw new ApiError(500, "Problem while deleting address");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            {},
+            "Address deleted successfully"
+        ))
+});
+
 export {
     addAddress,
-    updateAddress
+    updateAddress,
+    deleteAddress
 }
