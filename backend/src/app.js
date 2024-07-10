@@ -22,12 +22,14 @@ app.use(cookieParser());
 import userRouter from "./routes/user.routes.js";
 import adminRouter from "./routes/admin.routes.js";
 import reviewRouter from "./routes/review.routes.js";
+import addressRouter from "./routes/address.routes.js";
 
 
 // Router Declaration
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/admin", adminRouter);
-app.use("/api/v1/review", reviewRouter)
+app.use("/api/v1/review", reviewRouter);
+app.use("/api/v1/address", addressRouter);
 
 
 app.use(ErrorHandler);
