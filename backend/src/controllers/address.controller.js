@@ -1,7 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js"
-import { User } from "../models/user.model.js";
 import { Address } from "../models/address.model.js";
 import mongoose from "mongoose";
 
@@ -28,6 +27,52 @@ const addAddress = asyncHandler(async (req, res) => {
             createdAddress,
             "Address added successfully"
         ))
+});
+
+const getUserAddresses = asyncHandler(async (req, res) => { 
+
+    const userAddresses = await Address.aggregate([
+        {
+            $match: {
+                user: new mongoose.Types.ObjectId(`${req.user._id}`)
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "user",
+                foreignField: "_id",
+                as: "user",
+                pipeline: [
+                    {
+                        $project: {
+                            fullName: 1,
+                            email: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                user: {
+                    $first: "$user"
+                }
+            }
+        }
+    ]);
+
+    if(!userAddresses){
+        throw new ApiError(500, "Problme while finding user addresses")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            userAddresses,
+            "User addresses fetched successfully"
+        ));
 });
 
 const updateAddress = asyncHandler(async (req, res) => {
@@ -162,6 +207,7 @@ const getAddressByid = asyncHandler(async (req, res) => {
 
 export {
     addAddress,
+    getUserAddresses,
     updateAddress,
     deleteAddress,
     getAddressByid
