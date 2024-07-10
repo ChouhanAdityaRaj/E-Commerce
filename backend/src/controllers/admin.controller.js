@@ -135,17 +135,15 @@ const updateProductDetails = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Atleast one field is required")
     }
 
-    const updates = {}; 
+    const updateObject = {}; 
 
-    for(const val of ["productName", "description", "price"]){
-        if(req.body[val] !== undefined){
-            updates[val] = req.body[val]; 
-        }
+    for (const key of Object.keys(req.body)) {
+        updateObject[key] = req.body[key];
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
         productid,
-        updates,
+        updateObject,
         {new: true}
     );
 
