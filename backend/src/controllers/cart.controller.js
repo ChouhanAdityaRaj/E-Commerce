@@ -94,6 +94,8 @@ const updateCartItem = asyncHandler(async (req, res) => {
     }
 
     await cart.save();
+
+    
     return res 
         .status(200)
         .json(new ApiResponse(
@@ -102,7 +104,42 @@ const updateCartItem = asyncHandler(async (req, res) => {
             "Cart item updated successfully"
         ));
 })
+
+const removeCartItem = asyncHandler(async (req, res) => {
+    const { cartid, itemid } = req.params;
+
+    const cart = await Cart.findById(cartid);
+
+    if(!cart){
+        throw new ApiError(404, "Cart not exist");
+    }
+
+    if(cart.user.toString() !== req.user._id.toString()){
+        throw new ApiError(401, "Only creator can update");
+    }
+
+
+    const itemIndex = cart.items.findIndex((item) => item._id.toString() === itemid);
+  
+    if(itemIndex === -1){
+        throw new ApiError(404, "Item not exist");
+    }
+
+    cart.items.splice(itemIndex, 1);
+
+    await cart.save();
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            cart,
+            "Cart item removed successfully"
+        ))
+});
+
 export {
     addToCart,
-    updateCartItem
+    updateCartItem,
+    removeCartItem
 }
