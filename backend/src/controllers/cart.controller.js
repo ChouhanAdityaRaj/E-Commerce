@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { Cart } from "../models/cart.model.js";
 import { Product } from "../models/product.model.js";
 import mongoose from "mongoose";
+import { Review } from "../models/review.model.js";
 
 function isEqual(obj1, obj2) {
     return JSON.stringify(obj1) === JSON.stringify(obj2);
@@ -169,10 +170,37 @@ const getCartInfo = asyncHandler(async (req, res) => {
                 as: "items.product",
                 pipeline: [
                     {
+                        $lookup: {
+                            from: "reviews",
+                            localField: "_id",
+                            foreignField: "product",
+                            as: "reviews",
+                        }
+                    },
+                    {
+                        $addFields: {
+                            sumOfReviewStar:  {
+                                $reduce: {
+                                    input: "$reviews",
+                                    initialValue: 0,
+                                    in: { $add: ["$$value", "$$this.rating"] }
+                                }
+                            },
+                            totalReview: { $size: "$reviews" },
+                        }
+                    },
+                    {
                         $project: {
                             productName: 1,
                             productImage: 1,
-                            price: 1
+                            price: 1,
+                            rating: {
+                                $cond: {
+                                    if: { $eq: ["$totalReview", 0] },
+                                    then: null,
+                                    else: { $divide: ["$sumOfReviewStar", "$totalReview"] }
+                                  }
+                            },
                         }
                     }
                 ]

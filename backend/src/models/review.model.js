@@ -9,7 +9,8 @@ const reviewImageSchema = new mongoose.Schema({
 const reviewSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        index:true
     },
     images: [reviewImageSchema],
     content: {
@@ -22,7 +23,8 @@ const reviewSchema = new mongoose.Schema({
     },
     product: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product"
+        ref: "Product",
+        index: true
     }
 }, {timestamps: true});
 
