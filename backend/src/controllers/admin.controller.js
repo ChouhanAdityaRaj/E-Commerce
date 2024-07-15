@@ -8,6 +8,7 @@ import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
 import { Review } from "../models/review.model.js";
 import { Category } from "../models/category.model.js";
 
+// Admin User Controllers
 const getAllUser = asyncHandler(async (req, res) => {
     const {page=1, limit=10, sortBy, sortType=1} = req.query;
 
@@ -381,7 +382,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 });
 
 
-// Category
+// Admin Category Controllers
 
 const createCategory = asyncHandler(async (req, res) => {
     const { name, description } = req.body;
@@ -410,6 +411,39 @@ const createCategory = asyncHandler(async (req, res) => {
         ));
 });
 
+const updateCategor = asyncHandler(async (req, res) =>{
+    const { categoryid } = req.params;
+    const { name, description } = req.body;
+
+    if(!( name || description )){
+        throw new ApiError(400, "At lest one field is required")
+    }
+
+    const updateObject = {};
+
+    for (const key of Object.keys(req.body)) {
+        updateObject[key] = req.body[key];
+    }
+
+    const updatedCategory = await Category.findByIdAndUpdate(
+        categoryid,
+        updateObject,
+        {new: true}
+    )
+
+    if(!updatedCategory){
+        throw new ApiError(404, "Category not exist")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            updatedCategory,
+            "Category updated successfully"
+        ))
+});
+
 export {
     getAllUser,
     addNewProduct,
@@ -419,5 +453,6 @@ export {
     deleteOtherProductImage,
     updateStock,
     deleteProduct,
-    createCategory
+    createCategory,
+    updateCategor
 }

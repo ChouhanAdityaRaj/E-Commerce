@@ -89,4 +89,20 @@ const createCategorySchema = z.object({
     .max(150, { message: "Category description must not be more than 150 characters." })
 })
 
-export { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, createCategorySchema };
+const updateCategorySchema = z.object({
+  name: z
+    .string({required_error: "Category name is required"})
+    .trim()
+    .toLowerCase()
+    .max(30, {message: "Category name must not be more than 30 characters."})
+    .optional(),
+
+  description: z
+    .string({required_error: "Category description is required"})
+    .trim()
+    .min(5, { message: "Category description must be at lest of 5 characters." })
+    .max(150, { message: "Category description must not be more than 150 characters." })
+    .optional(),
+})
+
+export { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, createCategorySchema, updateCategorySchema };
