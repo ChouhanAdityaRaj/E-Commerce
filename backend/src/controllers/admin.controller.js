@@ -6,6 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { uploadOnCloudinary} from "../utils/uploadOnCloudinary.js";
 import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
 import { Review } from "../models/review.model.js";
+import { Category } from "../models/category.model.js";
 
 const getAllUser = asyncHandler(async (req, res) => {
     const {page=1, limit=10, sortBy, sortType=1} = req.query;
@@ -68,8 +69,13 @@ const getAllUser = asyncHandler(async (req, res) => {
 
 // Admin Product Controllers
 const addNewProduct = asyncHandler(async (req, res) => {
-    const {productName, description, price, stock} = req.body;
+    const {productName, description, price, stock, category} = req.body;
 
+    const isCategoryExist = await Category.findById(category);
+
+    if(!isCategoryExist){
+        throw new ApiError(400, "Category not exist")
+    }
 
     // Handling Product Image 
     const productImageLocalPath = req?.files?.productImage?.length > 0 ? req.files?.productImage[0]?.path : undefined ;
@@ -111,6 +117,7 @@ const addNewProduct = asyncHandler(async (req, res) => {
         description,
         price,
         stock,
+        category
     });
 
 
@@ -373,6 +380,36 @@ const deleteProduct = asyncHandler(async (req, res) => {
         ))
 });
 
+
+// Category
+
+const createCategory = asyncHandler(async (req, res) => {
+    const { name, description } = req.body;
+
+    const isCategoryExist = await Category.findOne({ name });
+    
+    if(isCategoryExist){
+        throw new ApiError(409, "Category already exist with this name");
+    }
+
+    const newCategory = await Category.create({
+        name,
+        description
+    })
+
+    if(!newCategory){
+        throw new ApiError(500, "Problem while creating category");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            newCategory,
+            "Category created successfully"
+        ));
+});
+
 export {
     getAllUser,
     addNewProduct,
@@ -381,5 +418,6 @@ export {
     addOtherProductImages,
     deleteOtherProductImage,
     updateStock,
-    deleteProduct
+    deleteProduct,
+    createCategory
 }
