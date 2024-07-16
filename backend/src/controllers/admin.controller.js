@@ -334,6 +334,36 @@ const updateStock = asyncHandler(async (req, res) => {
 
 });
 
+const updateProductCategory = asyncHandler(async (req, res) => {
+    const { productid, categoryid } = req.params;
+
+    const category = await Category.findById(categoryid);
+    
+    if(!category){
+        throw new ApiError(404, "Category not exist")
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+        productid,
+        {
+            category: category?._id
+        },
+        { new: true }
+    );
+
+    if(!updatedProduct){
+        throw new ApiError(404, "Product not exist");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            updatedProduct,
+            "Product category updated successfully"
+        ));
+});
+
 const deleteProduct = asyncHandler(async (req, res) => {
     const { productid } = req.params;
 
@@ -516,13 +546,19 @@ const deleteCategory = asyncHandler(async (req, res) => {
 })
 
 export {
+    // User exports
     getAllUser,
+
+    //Product exports
     addNewProduct,
     updateProductDetails,
     updateProductImage,
     addOtherProductImages,
     deleteOtherProductImage,
     updateStock,
+    updateProductCategory,
+
+    //Category exports
     deleteProduct,
     createCategory,
     updateCategor,

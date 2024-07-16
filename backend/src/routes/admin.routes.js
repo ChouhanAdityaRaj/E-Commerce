@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { getAllUser, addNewProduct, updateProductDetails, updateProductImage, addOtherProductImages, deleteOtherProductImage, updateStock, deleteProduct, createCategory, updateCategor, deleteCategory } from "../controllers/admin.controller.js";
+import { getAllUser, addNewProduct, updateProductDetails, updateProductImage, addOtherProductImages, deleteOtherProductImage, updateStock, updateProductCategory, deleteProduct, createCategory, updateCategor, deleteCategory } from "../controllers/admin.controller.js";
 import { verifyAdmin } from "../middlewares/verifyAdmin.middleware.js";
 import { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, createCategorySchema, updateCategorySchema} from "../validations/admin.schema.js";
 import { validate } from "../middlewares/validate.middleware.js";
@@ -37,6 +37,7 @@ router.route("/product/:productid/other-image").patch(upload.fields([{name: "pro
 router.route("/product/:productid/other-image").delete(deleteOtherProductImage);
 router.route("/product/:productid/stock").patch(validate(updateStockSchema), updateStock);
 router.route("/product/:productid").delete(deleteProduct);
+router.route("/product/:productid/category/:categoryid").patch(updateProductCategory);
 
 
 // Admin Category Routes
