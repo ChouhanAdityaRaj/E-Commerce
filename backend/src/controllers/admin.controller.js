@@ -419,6 +419,16 @@ const updateCategor = asyncHandler(async (req, res) =>{
         throw new ApiError(400, "At lest one field is required")
     }
 
+    const category = await Category.findById(categoryid)
+
+    if(!category){
+        throw new ApiError(404, "Category not exist");
+    }
+
+    if(category.name === "uncategorized"){
+        throw new ApiError(401, "You can't delete this category")
+    }
+
     const updateObject = {};
 
     for (const key of Object.keys(req.body)) {
@@ -432,7 +442,7 @@ const updateCategor = asyncHandler(async (req, res) =>{
     )
 
     if(!updatedCategory){
-        throw new ApiError(404, "Category not exist")
+        throw new ApiError(500, "Problem while updating category")
     }
 
     return res
@@ -444,6 +454,67 @@ const updateCategor = asyncHandler(async (req, res) =>{
         ))
 });
 
+const deleteCategory = asyncHandler(async (req, res) => {
+    const { categoryid, newCategoryid=null } = req.params;
+
+    const category = await Category.findById(categoryid)
+
+    if(!category){
+        throw new ApiError(404, "Category not exist");
+    }
+
+    if(category.name === "uncategorized"){
+        throw new ApiError(401, "You can't delete this category")
+    }
+
+    const newCategory = await Category.findById(newCategoryid);
+
+    if(newCategory){
+        const updateProductCategory = await Product.updateMany(
+            {category: categoryid},
+            {
+                category: newCategory?._id
+            },
+            {new: true}
+        );
+
+        if(!updateProductCategory){
+            throw new ApiError(500, "Problem changing product category")
+        }
+    }
+
+    if(!newCategory){
+        const defaultCategory = await Category.findOne({name: "uncategorized"});
+
+        const updateProductCategory = await Product.updateMany(
+            {category: categoryid},
+            {
+                category: defaultCategory._id
+            },
+            {new: true}
+        );
+
+        if(!updateProductCategory){
+            throw new ApiError(500, "Problem changing product category")
+        }
+    }
+
+    const deletedCategory = await Category.findByIdAndDelete(categoryid);
+
+    if(!deletedCategory){
+        throw new ApiError(500, "Problem while deleting category");
+    }
+
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            {},
+            "Category deleated successfully"
+        ))
+})
+
 export {
     getAllUser,
     addNewProduct,
@@ -454,5 +525,6 @@ export {
     updateStock,
     deleteProduct,
     createCategory,
-    updateCategor
+    updateCategor,
+    deleteCategory
 }

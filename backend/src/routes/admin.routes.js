@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { getAllUser, addNewProduct, updateProductDetails, updateProductImage, addOtherProductImages, deleteOtherProductImage, updateStock, deleteProduct, createCategory, updateCategor } from "../controllers/admin.controller.js";
+import { getAllUser, addNewProduct, updateProductDetails, updateProductImage, addOtherProductImages, deleteOtherProductImage, updateStock, deleteProduct, createCategory, updateCategor, deleteCategory } from "../controllers/admin.controller.js";
 import { verifyAdmin } from "../middlewares/verifyAdmin.middleware.js";
 import { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, createCategorySchema, updateCategorySchema} from "../validations/admin.schema.js";
 import { validate } from "../middlewares/validate.middleware.js";
@@ -42,5 +42,6 @@ router.route("/product/:productid").delete(deleteProduct);
 // Admin Category Routes
 router.route("/category").post(validate(createCategorySchema), createCategory);
 router.route("/category/:categoryid").patch(validate(updateCategorySchema), updateCategor);
+router.route("/category/:categoryid/:newCategoryid?").delete(deleteCategory);
 
 export default router;
