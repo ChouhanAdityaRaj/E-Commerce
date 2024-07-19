@@ -24,6 +24,7 @@ import adminRouter from "./routes/admin.routes.js";
 import reviewRouter from "./routes/review.routes.js";
 import addressRouter from "./routes/address.routes.js";
 import cartRouter from "./routes/cart.routes.js";
+import categoryRouter from "./routes/category.routes.js";
 
 
 // Router Declaration
@@ -32,6 +33,7 @@ app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/review", reviewRouter);
 app.use("/api/v1/address", addressRouter);
 app.use("/api/v1/cart", cartRouter);
+app.use("/api/v1/category", categoryRouter);
 
 
 app.use(ErrorHandler);
