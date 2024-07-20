@@ -108,6 +108,10 @@ const searchProducts = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Problem while fetching products")
     }
 
+    if(!products.length){
+        throw new ApiError(404, `There is no page ${+page}`);
+    }
+
     return res
         .status(200)
         .json(new ApiResponse(
