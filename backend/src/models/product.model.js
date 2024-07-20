@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import { ApiError } from "../utils/ApiError.js";
+import {MAX_DISCOUNT} from "../constants.js";
+
 
 const productOtherImageSchema = new mongoose.Schema({
   image: {
@@ -48,7 +51,40 @@ const productSchema = new mongoose.Schema({
     discount: {
       type: Number,
       default: 0,
+      min: 0,
+      max: [MAX_DISCOUNT, `Can't add more then ${MAX_DISCOUNT}% discount`],
     },
 }, { timestamps: true });
+
+
+productSchema.methods.addDiscount = async function(discount){
+  if(this.discount){
+    return null
+  }
+
+  this.discount = discount;
+  const discountedAmount = ( this.price / 100 ) * discount;
+  this.price = this.price - discountedAmount;
+  await this.save();
+  return {
+    currentPrice: this.price,
+    discount: this.discount
+  };
+};
+
+productSchema.methods.removeDiscount = async function(){
+  
+  if(!this.discount){
+    return null
+  }
+
+  this.price = this.price / ( 1 - ( this.discount / 100 ));
+  this.discount = 0;
+  await this.save();
+  return {
+    currentPrice: this.price,
+    discount: this.discount
+  };
+};
 
 export const Product = mongoose.model("Product", productSchema);

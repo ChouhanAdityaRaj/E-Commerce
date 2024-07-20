@@ -1,5 +1,6 @@
 import { z } from "zod";
 import mongoose from "mongoose";
+import {MAX_DISCOUNT} from "../constants.js";
 
 const stockSubSchema = z.object({
   size: z.preprocess(
@@ -72,6 +73,13 @@ const updateStockSchema = z.object({
   stocks: z.array(updateStockSubSchema, {message: "Stock is required"}).nonempty({message: "Stock is required"}),
 });
 
+const addDiscountSchema = z.object({
+  discount: z
+      .number({required_error: "Discount is required"})
+      .min(0, {message: "At lest 0"})
+      .max(MAX_DISCOUNT, {message: `Can't add more then ${MAX_DISCOUNT}% discount`})
+})
+
 
 //Admin Category Schemes
 
@@ -105,4 +113,4 @@ const updateCategorySchema = z.object({
     .optional(),
 })
 
-export { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, createCategorySchema, updateCategorySchema };
+export { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, addDiscountSchema, createCategorySchema, updateCategorySchema };

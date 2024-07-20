@@ -411,6 +411,56 @@ const deleteProduct = asyncHandler(async (req, res) => {
         ))
 });
 
+const addDiscount = asyncHandler(async (req, res) => {
+    const { productid } = req.params;
+    const { discount } = req.body;
+
+    const product = await Product.findById(productid);
+
+    if(!product){
+        throw new ApiError(404, "Product not exist")
+    }
+
+    const addedDiscount = await product.addDiscount(discount);
+
+    if(!addedDiscount){
+        throw new ApiError(400, "Discount is already there")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            addedDiscount,
+            "Disscount added successfully"
+        ));
+
+});
+
+const removeDiscount = asyncHandler(async (req, res) => {
+    const { productid } = req.params;
+
+    const product = await Product.findById(productid);
+
+    if(!product){
+        throw new ApiError(404, "Product not exist")
+    }
+
+    const removedDiscount = await product.removeDiscount();
+
+    if(!removedDiscount){
+        throw new ApiError(400, "Discount is already 0")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            removedDiscount,
+            "Disscount removed successfully"
+        ));
+});
+
 
 // Admin Category Controllers
 
@@ -557,6 +607,8 @@ export {
     deleteOtherProductImage,
     updateStock,
     updateProductCategory,
+    addDiscount,
+    removeDiscount,
 
     //Category exports
     deleteProduct,

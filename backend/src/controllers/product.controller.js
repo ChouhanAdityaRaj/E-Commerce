@@ -190,9 +190,7 @@ const getProductById = asyncHandler(async (req, res) => {
         }
     ])
 
-    console.log(product);
-
-    if(!product){
+    if(!product.length){
         throw new ApiError(404, "Product not exist");
     }
 
