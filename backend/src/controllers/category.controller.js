@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 
 
 const getAllCategories = asyncHandler(async (req, res) => {
+
     const categories = await Category.find().select("-updatedAt -createdAt");
 
     if(!categories){
@@ -25,6 +26,91 @@ const getAllCategories = asyncHandler(async (req, res) => {
 
 const getCategoryById = asyncHandler(async (req, res) => {
     const { categoryid } = req.params;
+    const { page=1, limit=10, sortBy, sortType=1 } = req.query;
+
+    if(page === 0){
+        throw new ApiError(400, "Page number must be posative")
+    }
+
+    const productStageSubPipeline = [
+        {
+            $lookup: {
+                from: "reviews",
+                localField: "_id",
+                foreignField: "product",
+                as: "reviews",
+            }
+        },
+        {
+            $addFields: {
+                sumOfReviewStar:  {
+                    $reduce: {
+                        input: "$reviews",
+                        initialValue: 0,
+                        in: { $add: ["$$value", "$$this.rating"] }
+                    }
+                },
+                totalReview: { $size: "$reviews" },
+            }
+        },
+        {
+            $project: {
+                productName: 1,
+                productImage: 1,
+                price: 1,
+                rating: {
+                    $cond: {
+                        if: { $eq: ["$totalReview", 0] },
+                        then: null,
+                        else: { $divide: ["$sumOfReviewStar", "$totalReview"] }
+                      }
+                },
+            }
+        }
+    ]
+
+
+    if(sortBy === "price"){
+        productStageSubPipeline.push(
+            {
+                $sort: {
+                    price: +sortType 
+                }
+            }
+        )
+    }
+
+    if(sortBy === "rating"){
+        productStageSubPipeline.push(
+            {
+                $sort: {
+                    rating: +sortType 
+                }
+            }
+        )
+    }
+
+    if(sortBy === "date"){
+        productStageSubPipeline.push(
+            {
+                $sort: {
+                    createdAt: +sortType 
+                }
+            }
+        )
+    }
+
+    productStageSubPipeline.push(
+        {
+            $limit: +page * +limit
+        },
+        {
+            $skip: +page * +limit - +limit
+
+        }
+    )
+
+
 
     const category = await Category.aggregate([
         {
@@ -38,42 +124,7 @@ const getCategoryById = asyncHandler(async (req, res) => {
                 localField: "_id",
                 foreignField: "category",
                 as: "products",
-                pipeline: [
-                    {
-                        $lookup: {
-                            from: "reviews",
-                            localField: "_id",
-                            foreignField: "product",
-                            as: "reviews",
-                        }
-                    },
-                    {
-                        $addFields: {
-                            sumOfReviewStar:  {
-                                $reduce: {
-                                    input: "$reviews",
-                                    initialValue: 0,
-                                    in: { $add: ["$$value", "$$this.rating"] }
-                                }
-                            },
-                            totalReview: { $size: "$reviews" },
-                        }
-                    },
-                    {
-                        $project: {
-                            productName: 1,
-                            productImage: 1,
-                            price: 1,
-                            rating: {
-                                $cond: {
-                                    if: { $eq: ["$totalReview", 0] },
-                                    then: null,
-                                    else: { $divide: ["$sumOfReviewStar", "$totalReview"] }
-                                  }
-                            },
-                        }
-                    }
-                ]
+                pipeline: productStageSubPipeline
             }
         },
         {
@@ -92,6 +143,10 @@ const getCategoryById = asyncHandler(async (req, res) => {
 
     if(!category?.length){
         throw new ApiError(404, "Category not exist");
+    }
+
+    if(!category[0].products.length){
+        throw new ApiError(404, `There is no page ${+page}`);
     }
 
     return res

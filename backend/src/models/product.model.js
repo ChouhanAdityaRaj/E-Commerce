@@ -24,6 +24,7 @@ const productSchema = new mongoose.Schema({
       type: String,
       required: true,
       trim: true,
+      index: true
     },
     productImage: {
       type: String,
@@ -33,11 +34,11 @@ const productSchema = new mongoose.Schema({
     description: {
       type: String,
       required: true,
+      index: true
     },
     price: {
       type: Number,
       required: true,
-      index: true
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
