@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const useApi = function (urlPath, method = "get", data) {
-  const [data, setData] = useState(null);
+  const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -12,17 +12,17 @@ const useApi = function (urlPath, method = "get", data) {
         setLoading(true);
         setError("");
 
-        const response = data ? await axios[method](urlPath, data) : await axios[method](urlPath)
+        const res = data ? await axios[method](urlPath, data) : await axios[method](urlPath);
 
-        setData(response.data);
+        setResponse(res.data);
         setLoading(false);
       } catch (error) {
-        setError(error);
+        setError(error.response.data);
       }
     })();
   }, []);
 
-  return [data, loading, error];
+  return [response, loading, error];
 };
 
 export default useApi;

@@ -1,5 +1,5 @@
-const conf = {
+const config = {
     backendUrl: String(import.meta.env.VITE_BACKEND_URL),
 }
 
-export default conf;
+export default config;
