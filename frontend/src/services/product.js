@@ -22,24 +22,25 @@ class Product{
         }
 
 
-        const response = useApi(url);
 
-        return response;
+        return {
+            urlPath: url,
+        };
     }
 
     getProductById(productId){
-        const response = useApi(`${config.backendUrl}/product/${productId}`)
-
-        return response;
-    }
-
-    getAllCategories(){
-        const response = useApi(`${config.backendUrl}/category/`);
-
-        return response;
+        return {
+            urlPath: `${config.backendUrl}/product/${productId}`,
+        };
     }
 
     //Category
+    getAllCategories(){
+        return {
+            urlPath: `${config.backendUrl}/category/`,
+        };
+    }
+
     getCategoryById(categoryId, {sortBy, sortType, limit, page}){
         let url = `${config.backendUrl}/category/${categoryId}`;
 
@@ -63,54 +64,56 @@ class Product{
 
         url += `?${queryStringArray.join("&")}`;
 
-
-        const response = useApi(url);
-
-        return response;
+        return {
+            urlPath: url,
+        };
 
     }
 
     //Review
     createReview(productId, {content, rating, reviewImages}){
-        const response = useApi(`${config.backendUrl}/review/p/${productId}`, "post", {
-            content,
-            rating,
-            reviewImages
-        });
-
-        return response;
+        return {
+            urlPath: `${config.backendUrl}/review/p/${productId}`,
+            method: "post",
+            data: {content, rating, reviewImages}
+        };
     }
 
     updateReview(reviewId, data){
-        const response = useApi(`${config.backendUrl}/review/${reviewId}`, "patch", data);
-
-        return response;
+        return {
+            urlPath: `${config.backendUrl}/review/${reviewId}`,
+            method: "patch",
+            data
+        };
     }
 
     deleteReviewImages(reviewId, idList){
-        const response = useApi(`${config.backendUrl}/review/${reviewId}/images`, "delete", {idList});
-
-        return response;
+        return {
+            urlPath: `${config.backendUrl}/review/${reviewId}/images`,
+            method: "delete",
+            data: {idList}
+        };
     }
 
     addReviewImage(reviewId, reviewImages){
-        const response = useApi(`${config.backendUrl}/review/${reviewId}/images`, "patch", {
-            reviewImages
-        });
-
-        return response;
+        return {
+            urlPath: `${config.backendUrl}/review/${reviewId}/images`,
+            method: "patch",
+            data: { reviewImages}
+        };
     }
 
     deleteReview(reviewId){
-        const response = useApi(`${config.backendUrl}/review/${reviewId}`, "delete");
-
-        return response;
+        return {
+            urlPath: `${config.backendUrl}/review/${reviewId}`,
+            method: "delete",
+        };
     }
 
     getReviewById(reviewId){
-        const response = useApi(`${config.backendUrl}/review/${reviewId}`);
-
-        return response;
+        return {
+            urlPath: `${config.backendUrl}/review/${reviewId}`,
+        };
     }
 
     getProductReview(productId, {sortBy, sortType, limit, page}){
@@ -137,9 +140,9 @@ class Product{
         url += `?${queryStringArray.join("&")}`;
 
 
-        const response = useApi(url);
-
-        return response;
+        return {
+            urlPath: url,
+        };
     }
 }
 

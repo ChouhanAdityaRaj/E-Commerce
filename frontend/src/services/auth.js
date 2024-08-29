@@ -1,37 +1,35 @@
-import useApi from "../hooks/useApi";
 import config  from "../config/config";
 
 class AuthServie {
     signup({fullName, email, password}){
-        const response = useApi(`${config.backendUrl}/user/signup`, "post",{
-            fullName,
-            email,
-            password
-        });
-
-        return response;
+        return {
+            urlPath: `${config.backendUrl}/user/signup`,
+            method: "post",
+            data: {fullName,email, password}
+        };
     }
 
 
     login({email, password}){
-        const response = useApi(`${config.backendUrl}/user/login`, "post", {
-            email,
-            password
-        });
-
-        return response;
+        return {
+            urlPath: `${config.backendUrl}/user/login`,
+            method: "post",
+            data: {email, password}
+        };
     }
 
     logout(){
-        const response = useApi(`${config.backendUrl}/user/logout`, "post");
-
-        return response;
+        return {
+            urlPath: `${config.backendUrl}/user/logout`,
+            method: "post",
+        };
     }
 
     refreshAccessToken(){
-        const response = useApi(`${config.backendUrl}/user/refresh-token`, "post");
-
-        return response;
+        return {
+            urlPath: `${config.backendUrl}/user/refresh-token`,
+            method: "post",
+        };
     }
 }
 
