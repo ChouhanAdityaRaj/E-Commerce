@@ -1,38 +1,68 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import authService from "../services/auth";
-import {apiHandler} from "../utils"
+import authService from "../../services/auth";
+import {apiHandler} from "../../utils"
+import { useSelector } from "react-redux";
 
-function Login() {
+
+function Signup() {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
+  const authStatus = useSelector((state) => state.auth.status);
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if(authStatus){
+      navigate("/")
+    }
+  }, [])
 
-  const login = async ({email, password}) => {
+  const signup = async ({fullName, email, password}) => {
     setError("");
+    setLoading(true)
 
-    const [response, error] = await apiHandler(authService.login({email, password}));
+    const [response, error] = await apiHandler(authService.signup({fullName, email, password}));
   
     if(response){
-      navigate("/")
+      navigate("/verify-email");
     }
 
     if(error){
       setError(error.message)
     }
+
+    setLoading(false)
   };
 
   return (
     <div className="bg-amber-100 flex items-center justify-center min-h-screen p-4 sm:p-8">
-      <div className="bg-amber-200 shadow-lg rounded-lg p-6 sm:p-8 max-w-xs sm:max-w-md w-full">
+      <div className={`${loading ? "blur-[1px] ": "" } bg-amber-200 shadow-lg rounded-lg p-6 sm:p-8 max-w-xs sm:max-w-md w-full`}>
         <h2 className="text-2xl sm:text-3xl font-semibold text-amber-800 mb-6 text-center">
-          Login
+          Signup
         </h2>
         {error && <p className="text-red-600 text-2xl font-bold mb-4 text-center">{error}</p>}
-        <form onSubmit={handleSubmit(login)}>
+        <form onSubmit={handleSubmit(signup)}>
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className="block text-amber-900 font-medium mb-2"
+            >
+              Full Name
+            </label>
+            <input
+              type="text"
+              disabled={loading}
+              id="fullName"
+              name="fullName"
+              className="w-full p-2 sm:p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 bg-amber-50 border-amber-300 placeholder-amber-400 text-amber-900"
+              {...register("fullName", {
+                required: true,
+              })}
+            />
+          </div>
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -42,9 +72,9 @@ function Login() {
             </label>
             <input
               type="email"
+              disabled={loading}
               id="email"
               name="email"
-              //   required
               className="w-full p-2 sm:p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 bg-amber-50 border-amber-300 placeholder-amber-400 text-amber-900"
               {...register("email", {
                 required: true,
@@ -60,6 +90,7 @@ function Login() {
             </label>
             <input
               type="password"
+              disabled={loading}
               id="password"
               name="password"
               required
@@ -71,18 +102,19 @@ function Login() {
           </div>
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-amber-600 text-white font-semibold py-2 sm:py-3 rounded-lg hover:bg-amber-700 transition duration-300"
           >
             Login
           </button>
         </form>
         <p className="text-center text-amber-700 mt-4">
-          Don't have an account?{" "}
+          Already have an account?
           <Link
-            to="/signup"
+            to="/login"
             className="text-amber-900 font-medium hover:underline"
           >
-            Sign up
+            Login
           </Link>
         </p>
       </div>
@@ -90,4 +122,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Signup;

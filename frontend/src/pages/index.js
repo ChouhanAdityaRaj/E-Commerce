@@ -1,5 +1,7 @@
-import Login from "./Login";
+import Login from "./authPages/Login";
+import Signup from "./authPages/Signup";
 
 export {
     Login,
+    Signup
 }

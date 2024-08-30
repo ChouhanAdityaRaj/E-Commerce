@@ -1,9 +1,13 @@
-import { Login } from "../pages";
+import { Login, Signup } from "../pages";
 
 const AuthRoutes = [
     {
         path: "/login",
         element: <Login/>
+    },
+    {
+        path: "/signup",
+        element: <Signup/>
     }
 ]
 
