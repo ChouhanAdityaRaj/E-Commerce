@@ -1,15 +1,17 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import authService from "../../services/auth";
 import {apiHandler} from "../../utils"
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { login  as authLogin} from "../../store/authSlice";
 
 
 function Login() {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const authStatus = useSelector((state) => state.auth.status);
+  const dispatch = useDispatch()
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,8 +29,9 @@ function Login() {
     setLoading(true)
 
     const [response, error] = await apiHandler(authService.login({email, password}));
-  
+    
     if(response){
+      dispatch(authLogin(response.data));
       navigate("/")
     }
 
