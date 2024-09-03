@@ -43,7 +43,7 @@ router.route("/product/:productid/discount").delete(removeDiscount)
 
 
 // Admin Category Routes
-router.route("/category").post(validate(createCategorySchema), createCategory);
+router.route("/category").post(upload.single("categoryImage"), validate(createCategorySchema), createCategory);
 router.route("/category/:categoryid").patch(validate(updateCategorySchema), updateCategor);
 router.route("/category/:categoryid/:newCategoryid?").delete(deleteCategory);
 

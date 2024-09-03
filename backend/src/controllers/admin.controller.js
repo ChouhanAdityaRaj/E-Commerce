@@ -466,6 +466,11 @@ const removeDiscount = asyncHandler(async (req, res) => {
 
 const createCategory = asyncHandler(async (req, res) => {
     const { name, description } = req.body;
+    const categoryImageLocalPath = req.file ? req.file.path : undefined;
+
+    if(!categoryImageLocalPath){
+        throw new ApiError(400, "Category image is required");
+    }
 
     const isCategoryExist = await Category.findOne({ name });
     
@@ -473,9 +478,16 @@ const createCategory = asyncHandler(async (req, res) => {
         throw new ApiError(409, "Category already exist with this name");
     }
 
+    const categoryImage = await uploadOnCloudinary(categoryImageLocalPath);
+
+    if(!categoryImage){
+        throw new ApiError(500, "Problem while uploading category image")
+    }
+
     const newCategory = await Category.create({
         name,
-        description
+        description,
+        image: categoryImage.url
     })
 
     if(!newCategory){

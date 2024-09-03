@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { string } from "zod";
 
 const categorySchema = new mongoose.Schema({
 name: {
@@ -11,6 +12,10 @@ description: {
     type: String,
     required: true,
     trim: true
+},
+image: {
+    type: String,
+    required: true
 }
 }, {timestamps: true});
 
