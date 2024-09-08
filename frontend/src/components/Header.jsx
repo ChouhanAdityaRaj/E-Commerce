@@ -35,11 +35,11 @@ function Header() {
     {
       name: "Shop",
       path: "/shop",
-      activeStatus: true
+      activeStatus: false
     },
     {
-      name: "Sale",
-      path: "/sale",
+      name: "Collection",
+      path: "/collection",
       activeStatus: true
     },
     {
@@ -90,7 +90,7 @@ function Header() {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`md:hidden transition-all duration-200 ease-in-out transform ${isOpen ? ' opacity-100' : ' opacity-0'} ${isSearchBarOpen ? 'hidden' : 'block'} ${navBackground || isSearchBarOpen ? 'text-black' : ''} bg-white text-black  absolute w-full overflow-hidden`}>
+      <div aria-disabled className={`md:hidden transition-all duration-200 ease-in-out transform ${isOpen ? 'block opacity-100' : 'hidden opacity-0'} ${isSearchBarOpen ? 'hidden' : 'block'} ${navBackground || isSearchBarOpen ? 'text-black' : ''} bg-white text-black  absolute w-full overflow-hidden`}>
         {navigationMenu.map((item, i) => (
           item.activeStatus ?
           <Link key={i} to={item.path} className="block px-4 py-2 hover:bg-slate-100 text-center text-2xl font-semibold">{item.name}</Link>
