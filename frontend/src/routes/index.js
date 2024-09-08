@@ -1,10 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
-import { BaseLayout, AuthLayout } from "../layouts";
 import  AuthRoutes from "./AuthRoutes";
+import HomeRoutes from "./HomeRoutes";
 
 
 const router = createBrowserRouter([
-    ...AuthRoutes
+    ...AuthRoutes,
+    ...HomeRoutes
     
 ]);
 
