@@ -39,7 +39,7 @@ function Header() {
     },
     {
       name: "Collection",
-      path: "/collection",
+      path: "/collections",
       activeStatus: true
     },
     {

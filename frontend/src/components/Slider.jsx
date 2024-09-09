@@ -28,16 +28,7 @@ function Slider() {
   };
 
   return (
-    <div className="flex items-center justify-center my-8 flex-col">
-      <div className="flex flex-col justify-center mb-3 w-full sm:my-3 md:my-5 lg:my-5">
-        <h1 className="text-center text-2xl font-semibold my-1 sm:text-2xl md:text-3xl lg:text-5xl">
-          Discover
-        </h1>
-        <p className="text-center text-xs font-semibold text-zinc-500">
-          Our Wide Range Of Timeless Style, Inherited Elegance Collection
-        </p>
-      </div>
-
+    <div className="flex items-center justify-center flex-col">
       <div className="relative w-[100%] h-full  overflow-hidden shadow-lg">
         <div
           className="w-full h-full flex transition-transform duration-500 ease-in-out"
