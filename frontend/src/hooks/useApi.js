@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 const useApi = function ({urlPath, method = "get", data}) {
+  const location = useLocation();
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,7 +22,7 @@ const useApi = function ({urlPath, method = "get", data}) {
         setError(error.response.data);
       }
     })();
-  }, []);
+  }, [location.search]);
 
   return [response, loading, error];
 };
