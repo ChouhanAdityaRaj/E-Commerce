@@ -5,6 +5,7 @@ import Collection  from "./Collection";
 import Slider from "./Slider";
 import SearchBar from "./SearchBar";
 import CardSlider from "./CardSlider";
+import ErrorMessage from "./ErrorMessage";
 
 export {
     Loader,
@@ -13,5 +14,6 @@ export {
     Collection,
     Slider,
     SearchBar,
-    CardSlider
+    CardSlider,
+    ErrorMessage
 }

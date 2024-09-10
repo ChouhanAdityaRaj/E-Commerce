@@ -48,6 +48,7 @@ const searchProducts = asyncHandler(async (req, res) => {
             $project: {
                 productName: 1,
                 productImage: 1,
+                description: 1,
                 price: 1,
                 rating: {
                     $cond: {
@@ -109,7 +110,7 @@ const searchProducts = asyncHandler(async (req, res) => {
     }
 
     if(!products.length){
-        throw new ApiError(404, `There is no page ${+page}`);
+        throw new ApiError(404, `There is no Product`);
     }
 
     return res
