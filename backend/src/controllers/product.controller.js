@@ -204,7 +204,41 @@ const getProductById = asyncHandler(async (req, res) => {
         ));
 })
 
+const getAllProducts = asyncHandler(async (req, res) => {
+    const allProducts = await Product.aggregate([
+        {
+            $project: {
+                productName: 1,
+                productImage: 1,
+                description: 1,
+                price: 1,
+                rating: {
+                    $cond: {
+                        if: { $eq: ["$totalReview", 0] },
+                        then: null,
+                        else: { $divide: ["$sumOfReviewStar", "$totalReview"] }
+                      }
+                },
+                createdAt: 1
+            }
+        }
+    ]);
+
+    if(!allProducts){
+        throw new ApiError(500, "Problem while fetching products")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            allProducts,
+            "All products fetched successfully"
+        ))
+})
+
 export {
     searchProducts,
-    getProductById
+    getProductById,
+    getAllProducts
 }
