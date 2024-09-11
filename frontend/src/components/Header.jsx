@@ -106,7 +106,7 @@ function Header() {
 
 
       {/* Search Dropdown */}
-      <SearchBar isSearchBarOpen={isSearchBarOpen}/>
+      <SearchBar isSearchBarOpen={isSearchBarOpen} setIsSearchBarOpen={setIsSearchBarOpen}/>
     </nav>
   );
 }

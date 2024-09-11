@@ -1,21 +1,33 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form"
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"
+import { SlMagnifier } from "react-icons/sl"
+import { apiHandler } from "../utils";
+import productService from "../services/product";
+import product from "../services/product";
 
-function SearchBar({isSearchBarOpen = false}) {
-  const { register, handleSubmit } = useForm();
+
+function SearchBar({isSearchBarOpen = false, setIsSearchBarOpen}) {
+  const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [isNoSuggestionsResult, setIsNoSuggestionsResult] = useState(false);
+  const [suggestionsList, setSuggestionsList] = useState([]);
 
-  const suggestionsList = [
-    "TROUSER",
-    "POLO",
-    "JACKET",
-    "SHOES",
-    "SHIRT",
-    "JEANS",
-  ];
+  useEffect(() => {
+    (async () => {
+      const [response, error] = await apiHandler(productService.getAllProducts());
+      
+      if(response){
+        const suggestionsArray = response.data
+          .map((product) => product.productName)
+          .filter((v, i, self) => i == self.indexOf(v));
+
+          setSuggestionsList(suggestionsArray);
+      }
+    })()
+
+  }, [])
+
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -40,37 +52,41 @@ function SearchBar({isSearchBarOpen = false}) {
     }
   };
 
-  const handleSearch = ({ query }) => {
-    //TODO: Work in progress
+  const handleSearch = (e) => {
+    e.preventDefault()
+    setIsSearchBarOpen(false)
+    navigate(`/product?search=${searchQuery}`);
+        
+  };
+
+  const handleSearchOnClick = (suggestionSearchQuery) => {
+    setIsSearchBarOpen(false)
+    navigate(`/product?search=${suggestionSearchQuery}`);
+        
   };
 
   return (
     <div className="relative text-black">
-      <div className={`${isSearchBarOpen ? "block" : "hidden"} relative w-full max-w-lg mx-auto z-20 h-[40vh] overflow-hidden`}>
-        <form onSubmit={handleSubmit(handleSearch)}>
+      <div className={`${isSearchBarOpen ? "block" : "hidden"} relative w-full max-w-lg mx-auto z-20 h-[25vh] overflow-hidden`}>
+        <form onSubmit={handleSearch} className="flex">
           <input
             type="text"
+            value={searchQuery}
             placeholder="Search..."
             className="w-full text-xl px-4 py-2 border-b-2 border-black focus:outline-none mt-10"
-            {...register("query", {
-              required: true,
-            })}
             onChange={handleInputChange}
-            value={searchQuery}
           />
+          <button type="submit" className=" inline-block relative top-4 right-5"><SlMagnifier className=""/></button>
         </form>
-        <h4 className="px-4 py-2 text-xl font-bold cursor-pointer">
-          {isNoSuggestionsResult && "No result found!"}
-        </h4>
         {filteredSuggestions.length > 0 && (
-          <ul className="absolute w-full max-w-lg mx-auto z-30 bg-white mt-4">
+          <ul className="absolute flex w-full max-w-lg mx-auto z-30 bg-white mt-4">
             {filteredSuggestions.map((suggestion, index) => (
               <li
                 key={index}
-                className="px-4 py-2 hover:font-semibold cursor-pointer"
-                onClick={() => setSearchQuery(suggestion)}
+                className="flex items-center mx-2 px-4 py-2 hover:font-semibold hover:underline cursor-pointer"
+                onClick={() => handleSearchOnClick(suggestion)}
               >
-                {suggestion}
+                {suggestion}<SlMagnifier className="ml-2 text-sm"/>
               </li>
             ))}
           </ul>

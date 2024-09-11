@@ -34,6 +34,12 @@ class Product{
         };
     }
 
+    getAllProducts(){
+        return {
+            urlPath: `${config.backendUrl}/product/all-products`,
+        };
+    }
+
     //Category
     getAllCategories(){
         return {
