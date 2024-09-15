@@ -5,6 +5,7 @@ import { Cart } from "../models/cart.model.js";
 import { Product } from "../models/product.model.js";
 import mongoose from "mongoose";
 import { Review } from "../models/review.model.js";
+import { User } from "../models/user.model.js";
 
 function isEqual(obj1, obj2) {
     return JSON.stringify(obj1) === JSON.stringify(obj2);
@@ -239,10 +240,116 @@ const getCartInfo = asyncHandler(async (req, res) => {
         ))
 })
 
+const getCartInfoByUserId = asyncHandler(async (req, res) => {
+    const { userid } = req.params;
+
+    const user = await User.findById(userid);
+
+    if(!user){
+        throw new ApiError(404, "User not exist");
+    }
+
+    const cart = await Cart.findOne({user: userid});
+
+    if(!cart){
+        throw new ApiError(404, "Cart not exist");
+    }
+
+    if(cart.user.toString() !== req.user._id.toString()){
+        throw new ApiError(401, "Only creator can update");
+    }
+
+    const cartInfo = await Cart.aggregate([
+        {
+            $match: {
+                user: new mongoose.Types.ObjectId(`${userid}`)
+            }
+        },
+        { 
+            $unwind: "$items" 
+        }, 
+        {
+            $lookup: {
+                from: "products",
+                localField: "items.product",
+                foreignField: "_id",
+                as: "items.product",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "reviews",
+                            localField: "_id",
+                            foreignField: "product",
+                            as: "reviews",
+                        }
+                    },
+                    {
+                        $addFields: {
+                            sumOfReviewStar:  {
+                                $reduce: {
+                                    input: "$reviews",
+                                    initialValue: 0,
+                                    in: { $add: ["$$value", "$$this.rating"] }
+                                }
+                            },
+                            totalReview: { $size: "$reviews" },
+                        }
+                    },
+                    {
+                        $project: {
+                            productName: 1,
+                            productImage: 1,
+                            price: 1,
+                            rating: {
+                                $cond: {
+                                    if: { $eq: ["$totalReview", 0] },
+                                    then: null,
+                                    else: { $divide: ["$sumOfReviewStar", "$totalReview"] }
+                                  }
+                            },
+                        }
+                    }
+                ]
+            }
+        },
+        {   
+            $unwind: "$items.product" 
+        },
+        { 
+            $group: {
+                _id: "$_id",
+                user: { $first: "$user" },
+                items: { 
+                  $push: { 
+                      product: "$items.product", 
+                      size: "$items.size", 
+                      quantity: "$items.quantity",
+                      _id: "$items._id"
+                    }
+                },
+                totalAmount:  {$first: "$totalAmount"},
+            }
+        }
+    ]); 
+
+    if(!cartInfo){
+        throw new ApiError(500, "Problem while fetching cart information")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200, 
+            cartInfo[0],
+            "Cart information fetched successfully by user id"
+        ))
+})
+
 
 export {
     addToCart,
     updateCartItem,
     removeCartItem,
-    getCartInfo
+    getCartInfo,
+    getCartInfoByUserId
 }
