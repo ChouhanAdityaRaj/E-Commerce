@@ -14,7 +14,7 @@ const useApi = function ({urlPath, method = "get", data}) {
         setLoading(true);
         setError("");
 
-        const res = data ? await axios[method](urlPath, data) : await axios[method](urlPath);
+        const res = data ? await axios[method](urlPath, data, {withCredentials: true}) : await axios[method](urlPath, {withCredentials: true});
 
         setResponse(res.data);
         setLoading(false);

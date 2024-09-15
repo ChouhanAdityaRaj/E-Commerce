@@ -5,7 +5,7 @@ const apiHandler = async ({urlPath, method = "get", data}) => {
     let error = null;
 
     try {
-        const res = data ? await axios[method](urlPath, data) : await axios[method](urlPath);
+        const res = data ? await axios[method](urlPath, data, { withCredentials: true }) : await axios[method](urlPath, {withCredentials: true});
         
         if(res){
             response = res?.data;

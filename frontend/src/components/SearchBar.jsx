@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"
 import { SlMagnifier } from "react-icons/sl"
 import { apiHandler } from "../utils";
@@ -8,6 +8,7 @@ import product from "../services/product";
 
 function SearchBar({isSearchBarOpen = false, setIsSearchBarOpen}) {
   const navigate = useNavigate();
+  const inputRef = useRef(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
@@ -24,9 +25,13 @@ function SearchBar({isSearchBarOpen = false, setIsSearchBarOpen}) {
 
           setSuggestionsList(suggestionsArray);
       }
+
+      if(isSearchBarOpen){
+        inputRef.current.focus();
+      }
     })()
 
-  }, [])
+  }, [isSearchBarOpen])
 
 
   const handleInputChange = (e) => {
@@ -40,12 +45,10 @@ function SearchBar({isSearchBarOpen = false, setIsSearchBarOpen}) {
 
       if (!filtered.length) {
         setFilteredSuggestions([]);
-        setIsNoSuggestionsResult(true);
       }
 
       if (filtered.length) {
         setFilteredSuggestions(filtered);
-        setIsNoSuggestionsResult(false);
       }
     } else {
       setFilteredSuggestions([]);
@@ -72,6 +75,7 @@ function SearchBar({isSearchBarOpen = false, setIsSearchBarOpen}) {
           <input
             type="text"
             value={searchQuery}
+            ref={inputRef}
             placeholder="Search..."
             className="w-full text-xl px-4 py-2 border-b-2 border-black focus:outline-none mt-10"
             onChange={handleInputChange}

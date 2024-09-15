@@ -49,7 +49,7 @@ const CategoryGrid = ({numberOfCollection=null ,defaultCollectionItem=false}) =>
 
           {!numberOfCollection && response.data.map((category, i) => {
               return category.name !== "uncategorized" ? (
-                <div key={category.id} className="relative flex flex-col">
+                <div key={category._id} className="relative flex flex-col">
                   <img
                     src={category.image}
                     alt={category.name}

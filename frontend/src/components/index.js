@@ -6,6 +6,7 @@ import Slider from "./Slider";
 import SearchBar from "./SearchBar";
 import CardSlider from "./CardSlider";
 import ErrorMessage from "./ErrorMessage";
+import MessageAlert from "./MessageAlert";
 
 export {
     Loader,
@@ -15,5 +16,6 @@ export {
     Slider,
     SearchBar,
     CardSlider,
-    ErrorMessage
+    ErrorMessage,
+    MessageAlert
 }
