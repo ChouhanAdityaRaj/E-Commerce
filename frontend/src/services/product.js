@@ -123,7 +123,7 @@ class Product{
     }
 
     getProductReview(productId, {sortBy, sortType, limit, page}){
-        const url = `${config.backendUrl}/review/p/${productId}`;
+        let url = `${config.backendUrl}/review/p/${productId}`;
 
         const queryStringArray = [];
 
@@ -144,8 +144,7 @@ class Product{
         }
 
         url += `?${queryStringArray.join("&")}`;
-
-
+        
         return {
             urlPath: url,
         };

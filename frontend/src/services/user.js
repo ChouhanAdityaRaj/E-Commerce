@@ -1,4 +1,3 @@
-import useApi from "../hooks/useApi";
 import config from "../config/config";
 
 class User{
@@ -10,7 +9,7 @@ class User{
         };
     }
 
-    currentUser({fullName}){
+    currentUser(){
         return {
             urlPath: `${config.backendUrl}/user/current-user`
         };

@@ -7,6 +7,7 @@ import SearchBar from "./SearchBar";
 import CardSlider from "./CardSlider";
 import ErrorMessage from "./ErrorMessage";
 import MessageAlert from "./MessageAlert";
+import ReviewList from "./ReviewList";
 
 export {
     Loader,
@@ -17,5 +18,6 @@ export {
     SearchBar,
     CardSlider,
     ErrorMessage,
-    MessageAlert
+    MessageAlert,
+    ReviewList
 }
