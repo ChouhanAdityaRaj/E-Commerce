@@ -1,5 +1,5 @@
 import { BaseLayout } from "../layouts"
-import { ProductList } from "../pages";
+import { ProductList, ProductDetail } from "../pages";
 
 const ProductRoutes = [
     {
@@ -9,6 +9,10 @@ const ProductRoutes = [
             {
                 path: "",
                 element: <ProductList/>
+            },
+            {
+                path: ":productid",
+                element: <ProductDetail/>
             }
         ]
     }

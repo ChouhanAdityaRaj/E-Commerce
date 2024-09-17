@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Link, useSearchParams, useNavigate, useLocation } from "react-router-dom";
-import { useApi } from "../hooks";
-import product from "../services/product";
-import { Loader, ErrorMessage } from "../components";
+import React, { useState } from "react";
+import { Link, useSearchParams, useNavigate} from "react-router-dom";
+import { useApi } from "../../hooks";
+import productService from "../../services/product";
+import { Loader, ErrorMessage } from "../../components";
 import { LuIndianRupee } from "react-icons/lu";
 import { FaStar, FaRegStar } from "react-icons/fa";
-import { apiHandler } from "../utils"
 
 function ProductList() {
   const [searchParams] = useSearchParams();
-  const location = useLocation()
   const navigate = useNavigate();
 
 
@@ -21,7 +19,7 @@ function ProductList() {
   const [isOpen, setIsOpen] = useState(false);
   
   
-  const [response, loading, error] = useApi(product.searchProducts(queryString));
+  const [response, loading, error] = useApi(productService.searchProducts(queryString));
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
