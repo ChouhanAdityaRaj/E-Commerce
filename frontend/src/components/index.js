@@ -8,6 +8,7 @@ import CardSlider from "./CardSlider";
 import ErrorMessage from "./ErrorMessage";
 import MessageAlert from "./MessageAlert";
 import ReviewList from "./ReviewList";
+import AccountNavSidebar from "./AccountNavSidebar";
 
 export {
     Loader,
@@ -19,5 +20,6 @@ export {
     CardSlider,
     ErrorMessage,
     MessageAlert,
-    ReviewList
+    ReviewList,
+    AccountNavSidebar
 }
