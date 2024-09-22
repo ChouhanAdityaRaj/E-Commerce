@@ -3,14 +3,15 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "../components/index";
 
-function AuthLayout({childrean, authentication=true}) {
+function AuthLayout({children, authentication=true}) {
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const authStatus = useSelector((state) => state.auth.status);
     const navigate = useNavigate();
 
     useEffect(() => {
+        setLoading(true);
         if(authentication && !authStatus){
             navigate("/login");
         }
@@ -18,7 +19,8 @@ function AuthLayout({childrean, authentication=true}) {
         setLoading(false);
     }, [])
 
-  return loading ? <Loader/> : <>{childrean}</>;
+    return loading ? <Loader/> : <>{children}</>
+
 }
 
 export default AuthLayout;

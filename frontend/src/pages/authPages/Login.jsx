@@ -10,19 +10,10 @@ import { login  as authLogin} from "../../store/authSlice";
 function Login() {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
-  const authStatus = useSelector((state) => state.auth.status);
   const dispatch = useDispatch()
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if(authStatus){
-      navigate("/")
-    }
-  }, [])
-
-
 
   const login = async ({email, password}) => {
     setError("");
@@ -32,7 +23,11 @@ function Login() {
     
     if(response){
       dispatch(authLogin(response.data));
-      navigate("/")
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        navigate('/');
+      }
     }
 
     if(error){

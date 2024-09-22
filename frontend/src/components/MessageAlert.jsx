@@ -1,6 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ErrorComponent = ({ message, isError=true, handleMessage }) => {
+
+  useEffect(() => {
+    setTimeout(() => {
+      handleMessage();
+    }, 7000)
+  }, [])
+
   return (
     <>
         <div className="w-full flex justify-center ">
