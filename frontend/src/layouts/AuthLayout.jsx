@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "../components/index";
 
-function AuthLayout({children, authentication=true}) {
+function AuthLayout({children}) {
 
     const [loading, setLoading] = useState(false);
 
@@ -12,12 +12,13 @@ function AuthLayout({children, authentication=true}) {
 
     useEffect(() => {
         setLoading(true);
-        if(authentication && !authStatus){
+        
+        if(authStatus === false){
             navigate("/login");
         }
 
         setLoading(false);
-    }, [])
+    }, [authStatus])
 
     return loading ? <Loader/> : <>{children}</>
 

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { apiHandler } from "./utils";
 import userService from "./services/user";
 import { useDispatch } from "react-redux";
-import { login } from "./store/authSlice";
+import { login, logout } from "./store/authSlice";
 
 function App() {
   
@@ -17,6 +17,10 @@ function App() {
       
       if(response){
         dispatch(login(response.data));
+      }
+
+      if(error){
+        dispatch(logout());
       }
     })()
   }, [])

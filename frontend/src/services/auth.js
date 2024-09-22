@@ -22,6 +22,7 @@ class AuthServie {
         return {
             urlPath: `${config.backendUrl}/user/logout`,
             method: "post",
+            data: {}
         };
     }
 
