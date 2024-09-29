@@ -5,6 +5,7 @@ import Collections from "./Collections";
 import ProductList from "./productPages/ProductList";
 import ProductDetail from "./productPages/ProductDetail";
 import Profile from "./AccountPages/Profile";
+import Address from "./AccountPages/Address";
 
 export {
     Login,
@@ -13,5 +14,6 @@ export {
     Collections,
     ProductList,
     ProductDetail,
-    Profile
+    Profile,
+    Address
 }

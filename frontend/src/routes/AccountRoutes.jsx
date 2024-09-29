@@ -1,5 +1,5 @@
 import { BaseLayout, AuthLayout} from "../layouts"
-import { Profile } from "../pages";
+import { Profile, Address } from "../pages";
 
 const AccountRoutes = [
     {
@@ -15,6 +15,15 @@ const AccountRoutes = [
                     </AuthLayout>
                 )
             },
+            {
+                path: "address",
+                element: (
+                    
+                    <AuthLayout>
+                        <Address/>
+                    </AuthLayout>
+                )
+            }
         ]
     }
 ]
