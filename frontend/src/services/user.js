@@ -85,9 +85,9 @@ class User{
         };
     }
 
-    deleteCartItem(cartId, productId){
+    deleteCartItem(cartId, itemId){
         return {
-            urlPath: `${config.backendUrl}/cart/${cartId}/i/${productId}`,
+            urlPath: `${config.backendUrl}/cart/${cartId}/i/${itemId}`,
             method: "delete",
         };
     }

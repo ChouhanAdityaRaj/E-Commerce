@@ -339,7 +339,7 @@ const getUserCartInfo = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(
             200, 
-            cartInfo[0],
+            cartInfo[0] ? cartInfo[0] : null,
             "Cart information fetched successfully by user id"
         ))
 })

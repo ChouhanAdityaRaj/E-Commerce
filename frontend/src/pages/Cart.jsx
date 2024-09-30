@@ -3,6 +3,7 @@ import { apiHandler } from "../utils";
 import userService from "../services/user";
 import { ErrorMessage, MessageAlert, Loader } from "../components";
 import { Link } from "react-router-dom";
+import { IoCloseSharp } from "react-icons/io5";
 
 function Cart() {
   // Dummy product data
@@ -68,6 +69,19 @@ function Cart() {
     setShowSaveReset(false);
   };
 
+  const HandleRemoveFromCart = async(itemId) => {
+    const [response, error] = await apiHandler(userService.deleteCartItem(cart._id, itemId));
+
+    if(response){
+      setReload(!reload);
+      setResponseAlertMessage(response.message)
+    }
+
+    if(error){
+      setErrorAlertMessage(error.message)
+    }
+  }
+
 
   const handleReset = () => {
     setUpdateQuantityId([]);
@@ -81,10 +95,17 @@ function Cart() {
     <ErrorMessage message={error} />;
   }
 
+  
+  if(!cart){
+    return (
+      <h1 className="w-full h-screen flex items-center justify-center text-4xl">Your cart looks lonely! Browse our collections and add some items to fill it up.</h1>
+    )
+  }
+  
   if (loading) {
     <Loader />;
   }
-
+  
   if (cart) {
     return (
       <div className="pt-14 pb-5 px-4 bg-gray-50">
@@ -101,7 +122,7 @@ function Cart() {
             handleMessage={() => setResponseAlertMessage("")}
           />
         )}
-        <h1 className="text-7xl font-bold text-center">Cart</h1>
+        <h1 className="text-5xl lg:text-7xl font-bold text-center">Cart</h1>
         <p className="text-md font-semibold text-gray-400 mb-5 ml-5">
           {cart.items.length} item{cart.items.length > 1 ? "s" : ""} in your bag.
         </p>
@@ -117,8 +138,8 @@ function Cart() {
           {/* Cart Items */}
           {cart.items.map((item) => (
             <div
-              key={item._id}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-4 border-b pb-4 mb-4"
+            key={item._id}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-3 border-b pb-4 mb-4"
             >
               {/* Product Info */}
               <div className="col-span-6 flex">
@@ -172,13 +193,15 @@ function Cart() {
                 <p className="text-lg font-bold">
                 ₹{(item.product.price * item.quantity)}
                 </p>
+                <button onClick={() => HandleRemoveFromCart(item._id)} className="h-full w-[75%] relative bottom-24 lg:bottom-0 lg:flex lg:justify-end"><IoCloseSharp className="transition-all ease-in-out duration-500 text-2xl hover:text-3xl" /></button>    
+                
               </div>
             </div>
           ))}
 
           {/* Save Button */}
           {showSaveReset && (
-            <div className="flex justify-end mt-4 mr-10 space-x-3">
+            <div className="flex justify-center lg:justify-end mt-4 lg:mr-10 space-x-3">
               <button
                 onClick={handleReset}
                 className="bg-slate-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-slate-500"
@@ -196,7 +219,7 @@ function Cart() {
 
           {/* Total Section */}
           <div className="w-[100%] flex justify-center">
-          <div className="w-[80%]  mt-6 mx-5 flex justify-end items-center">
+          <div className="w-[100%] lg:w-[80%]  mt-6 lg:mx-5 flex lg:justify-end items-center">
             <button className=" transition-colors ease-in-out duration-500 mx-5 border-2 border-gray-300 bg-black text-white font-bold px-7 py-3 rounded-full hover:text-black hover:bg-white">Buy Now</button>
             <p className="text-2xl font-bold">
               Total:{" "}
@@ -208,6 +231,7 @@ function Cart() {
       </div>
     );
   }
+  
 }
 
 export default Cart;
