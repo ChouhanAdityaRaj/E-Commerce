@@ -23,6 +23,7 @@ function Address() {
   const [responseMessage, setResponseMessage] = useState("");
   const [reload, setReload] = useState(false);
   const [isAddAddressFromOpen, setIsAddAddressFromOpen] = useState(false);
+  const [isButtonDisable, setIsButtonDisable] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -53,6 +54,7 @@ function Address() {
   }, [isUpdateFormOpen, updateFormId]);
 
   const updateAddressHandler = async (data) => {
+    setIsButtonDisable(true);
     setErrorMessage("");
     setResponseMessage("");
 
@@ -79,9 +81,12 @@ function Address() {
     if (error) {
       setErrorMessage(error.message);
     }
+
+    setIsButtonDisable(false);
   };
 
   const addAddressHandler = async (data) => {
+    setIsButtonDisable(true);
     setErrorMessage("");
     setResponseMessage("");
 
@@ -106,9 +111,11 @@ function Address() {
     if (error) {
       setErrorMessage(error.message);
     }
+    setIsButtonDisable(false);
   };
 
   const removeAddressHandler = async (addressId) => {
+    setIsButtonDisable(true);
     setErrorMessage("");
     setResponseMessage("");
 
@@ -124,6 +131,7 @@ function Address() {
     if (error) {
       setErrorMessage(error.message);
     }
+    setIsButtonDisable(false);
   };
 
   if (error) {
@@ -151,7 +159,9 @@ function Address() {
           />
         )}
         <h1 className="text-3xl lg:text-6xl xl:text-4xl font-bold mb-6 text-center">
-          {addresses.length ? "Your Addresses" : "You haven't added any addresses yet."}
+          {addresses.length
+            ? "Your Addresses"
+            : "You haven't added any addresses yet."}
         </h1>
         <div className="flex flex-wrap gap-4 justify-center">
           {addresses.map((address) => (
@@ -171,6 +181,7 @@ function Address() {
               <div className="mt-4 space-x-2">
                 <button
                   className=" transition-colors duration-300 ease-in-out px-3 py-1 border border-gray-200 rounded-md bg-blue-500 hover:bg-white hover:text-black text-white"
+                  disabled={isButtonDisable}
                   onClick={() => {
                     setIsUpdateFormOpen(true);
                     setUpdateFormId(address._id);
@@ -179,6 +190,7 @@ function Address() {
                   Edit
                 </button>
                 <button
+                  disabled={isButtonDisable}
                   className=" transition-colors duration-500 ease-in-out px-3 py-1 border border-gray-200 rounded-md bg-blue-500 hover:bg-white hover:text-black text-white"
                   onClick={() => removeAddressHandler(address._id)}
                 >
@@ -187,12 +199,13 @@ function Address() {
               </div>
             </div>
           ))}
-          <div
+          <button
+            disabled={isButtonDisable}
             onClick={() => setIsAddAddressFromOpen(true)}
             className=" transition-colors duration-500 ease-in-out border p-4 rounded-lg mb-4 w-full md:w-1/2 lg:w-1/3 flex items-center justify-center bg-blue-500 text-white text-3xl hover:bg-white hover:text-black"
           >
             Add Address
-          </div>
+          </button>
         </div>
 
         {/* Update Form */}
@@ -266,6 +279,7 @@ function Address() {
               </ul>
               <div className="flex justify-end space-x-4">
                 <button
+                  disabled={isButtonDisable}
                   type="button"
                   className="px-4 py-2 bg-gray-300 rounded-md"
                   onClick={() => {
@@ -277,6 +291,7 @@ function Address() {
                   Cancel
                 </button>
                 <button
+                  disabled={isButtonDisable}
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-md"
                 >
@@ -352,6 +367,7 @@ function Address() {
                 </ul>
                 <div className="flex justify-end space-x-4">
                   <button
+                    disabled={isButtonDisable}
                     type="button"
                     className="px-4 py-2 bg-gray-300 rounded-md"
                     onClick={() => setIsAddAddressFromOpen(false)}
@@ -359,6 +375,7 @@ function Address() {
                     Cancel
                   </button>
                   <button
+                    disabled={isButtonDisable}
                     type="submit"
                     className="px-4 py-2 bg-blue-600 text-white rounded-md"
                   >

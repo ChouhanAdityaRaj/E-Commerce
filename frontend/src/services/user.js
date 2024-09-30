@@ -77,9 +77,9 @@ class User{
         };
     }
     
-    updateCartItem(cartId, productId, data){
+    updateCartItem(cartId, itemId, data){
         return {
-            urlPath: `${config.backendUrl}/cart/${cartId}/i/${productId}`,
+            urlPath: `${config.backendUrl}/cart/${cartId}/i/${itemId}`,
             method: "patch",
             data
         };
@@ -96,6 +96,12 @@ class User{
         return {
             urlPath: `${config.backendUrl}/cart/${cartId}`,
         };
+    }
+
+    getUserCartInfo(){
+        return {
+            urlPath: `${config.backendUrl}/cart/u`,
+        }
     }
 
 };

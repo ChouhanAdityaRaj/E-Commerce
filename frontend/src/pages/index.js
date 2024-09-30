@@ -6,6 +6,7 @@ import ProductList from "./productPages/ProductList";
 import ProductDetail from "./productPages/ProductDetail";
 import Profile from "./AccountPages/Profile";
 import Address from "./AccountPages/Address";
+import Cart from "./Cart";
 
 export {
     Login,
@@ -15,5 +16,6 @@ export {
     ProductList,
     ProductDetail,
     Profile,
-    Address
+    Address,
+    Cart
 }
