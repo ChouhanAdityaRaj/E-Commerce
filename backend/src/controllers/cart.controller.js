@@ -240,16 +240,14 @@ const getCartInfo = asyncHandler(async (req, res) => {
         ))
 })
 
-const getCartInfoByUserId = asyncHandler(async (req, res) => {
-    const { userid } = req.params;
-
-    const user = await User.findById(userid);
+const getUserCartInfo = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
 
     if(!user){
         throw new ApiError(404, "User not exist");
     }
 
-    const cart = await Cart.findOne({user: userid});
+    const cart = await Cart.findOne({user: req.user._id});
 
     if(!cart){
         throw new ApiError(404, "Cart not exist");
@@ -262,7 +260,7 @@ const getCartInfoByUserId = asyncHandler(async (req, res) => {
     const cartInfo = await Cart.aggregate([
         {
             $match: {
-                user: new mongoose.Types.ObjectId(`${userid}`)
+                user: new mongoose.Types.ObjectId(`${req.user._id}`)
             }
         },
         { 
@@ -300,6 +298,7 @@ const getCartInfoByUserId = asyncHandler(async (req, res) => {
                             productName: 1,
                             productImage: 1,
                             price: 1,
+                            description: 1,
                             rating: {
                                 $cond: {
                                     if: { $eq: ["$totalReview", 0] },
@@ -351,5 +350,5 @@ export {
     updateCartItem,
     removeCartItem,
     getCartInfo,
-    getCartInfoByUserId
+    getUserCartInfo
 }
