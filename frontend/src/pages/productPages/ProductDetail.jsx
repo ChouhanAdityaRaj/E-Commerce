@@ -243,7 +243,7 @@ function ProductDetail() {
 
 
         {/* Product Reviews */}
-        {product.rating && (<ReviewList productid={product._id} limit={5} page={1}/>)}
+        {product.rating && (<ReviewList productid={product._id} limit={5} page={1} moreReviewButton={true}/>)}
         
       </div>
     );

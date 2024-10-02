@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux";
 import { MessageAlert } from "../components"
 
-function ReviewList({ productid, limit, page, sortBy, sortType, isFilterRequired=true }) {
+function ReviewList({ productid, limit, page, sortBy, sortType, isFilterRequired=true, moreReviewButton=false }) {
   
   const { register, handleSubmit} = useForm()
   const navigate = useNavigate();
@@ -144,13 +144,22 @@ function ReviewList({ productid, limit, page, sortBy, sortType, isFilterRequired
     setIsButtonDisable(false);
   }
 
+  if(productError?.message === 'input must be a 24 character hex string, 12 byte Uint8Array, or an integer'){
+    return (
+      <ErrorMessage message={"Invalid Product"} />
+    );
+  }
 
   if (error) {
-    <ErrorMessage message={error} />;
+    return (
+      <ErrorMessage message={error} />
+    );
   }
 
   if (reviewLoading || productLoading) {
-    <Loader />;
+    return (
+      <Loader />
+    );
   }
 
   if (reviewResponse && productResponse) {
@@ -321,12 +330,13 @@ function ReviewList({ productid, limit, page, sortBy, sortType, isFilterRequired
             >
               {currentUserReview ? "Update Review" : "Write A Review"}
             </button>)}
-            <button 
+            {moreReviewButton && (<button 
               disabled={isButtonDisable}
               className="w-full md:w-auto px-4 py-2 bg-gray-100 text-blue-500 rounded.md hover:bg-gray-50 lg:text-3xl lg:px-7 lg:py-4 xl:text-xl xl:py-3"
+              onClick={() => navigate(`/review/product/${productid}`)}
             >
               See All Reviews
-            </button>
+            </button>)}
           </div>
 
           {/* Write Review Form */}
