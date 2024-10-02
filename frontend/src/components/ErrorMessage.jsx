@@ -2,8 +2,8 @@ import React from "react";
 
 const ErrorMessage = ({ message }) => {
   return (
-    <div className="flex justify-center items-center h-screen bg-neutral-500">
-        <p className="mt-2 text-3xl md:text-7xl  xl:text-8xl ">{message}</p>
+    <div className="flex justify-center items-center h-screen">
+        <p className="mt-2 text-2xl md:text-5xl  xl:text-6xl ">{message}</p>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { BaseLayout } from "../layouts"
-import { Collections } from "../pages";
+import { Collections, CollectionProductList } from "../pages";
 
 const CollectionsRoutes = [
     {
@@ -9,6 +9,10 @@ const CollectionsRoutes = [
             {
                 path: "",
                 element: <Collections/>
+            },
+            {
+                path:":categoryid",
+                element: <CollectionProductList/>
             }
         ]
     }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Collection, Slider } from "../components"
+import { Collection, Slider } from "../../components"
 
 function Collections() {
   return (

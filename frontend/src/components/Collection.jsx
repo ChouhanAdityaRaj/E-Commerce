@@ -3,6 +3,7 @@ import { useApi } from "../hooks";
 import productService from "../services/product";
 import Loader from "./Loader";
 import moreCollectionImage from "../assets/moreCollectionImage.jpg";
+import { Link } from "react-router-dom";
 
 const CategoryGrid = ({numberOfCollection=null ,defaultCollectionItem=false}) => {
   const [response, loading, error] = useApi(productService.getAllCategories());
@@ -31,7 +32,7 @@ const CategoryGrid = ({numberOfCollection=null ,defaultCollectionItem=false}) =>
           {numberOfCollection && response.data.map((category, i) => {
             if(i <= numberOfCollection){
               return category.name !== "uncategorized" ? (
-                <div key={category._id} className="relative flex flex-col">
+                <Link to={`/collections/${category._id}`} key={category._id} className="relative flex flex-col">
                   <img
                     src={category.image}
                     alt={category.name}
@@ -42,14 +43,14 @@ const CategoryGrid = ({numberOfCollection=null ,defaultCollectionItem=false}) =>
                       {category.name}
                     </h2>
                   </div>
-                </div>
+                </Link>
               ) : null;
             }
           })}
 
           {!numberOfCollection && response.data.map((category, i) => {
               return category.name !== "uncategorized" ? (
-                <div key={category._id} className="relative flex flex-col">
+                <Link to={`/collections/${category._id}`} key={category._id} className="relative flex flex-col">
                   <img
                     src={category.image}
                     alt={category.name}
@@ -60,11 +61,11 @@ const CategoryGrid = ({numberOfCollection=null ,defaultCollectionItem=false}) =>
                       {category.name}
                     </h2>
                   </div>
-                </div>
+                </Link>
               ) : null;
           })}
           
-          {defaultCollectionItem && (<div className="relative flex flex-col">
+          {defaultCollectionItem && (<Link to={"/collections"} className="relative flex flex-col">
             <img
               src={moreCollectionImage}
               alt="More"
@@ -75,7 +76,7 @@ const CategoryGrid = ({numberOfCollection=null ,defaultCollectionItem=false}) =>
                 More
               </h2>
             </div>
-          </div>)}
+          </Link>)}
 
         </div>
       </div>
