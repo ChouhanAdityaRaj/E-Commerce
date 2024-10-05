@@ -5,7 +5,8 @@ import CollectionsRoutes from "./CollectionsRoutes";
 import ProductRoutes from "./ProductRoutes";
 import AccountRoutes from "./AccountRoutes";
 import CartRoutes  from "./CartRoutes";
-import ReviewRoutes from "./ReviewRoutes"
+import ReviewRoutes from "./ReviewRoutes";
+import AdminRoutes from "./AdminRoutes";
 
 
 const router = createBrowserRouter([
@@ -15,7 +16,8 @@ const router = createBrowserRouter([
     ...ProductRoutes,
     ...AccountRoutes,
     ...CartRoutes,
-    ...ReviewRoutes
+    ...ReviewRoutes,
+    ...AdminRoutes
 ]);
 
 export default router;

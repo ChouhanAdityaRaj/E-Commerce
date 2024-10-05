@@ -8,7 +8,8 @@ import Profile from "./AccountPages/Profile";
 import Address from "./AccountPages/Address";
 import Cart from "./Cart";
 import ProductReviews from "./ProductReviews";
-import CollectionProductList from "./collection/CollectionProductList"
+import CollectionProductList from "./collection/CollectionProductList";
+import Users from "./admin/Users";
 
 export {
     Login,
@@ -21,5 +22,6 @@ export {
     Profile,
     Address,
     Cart,
-    ProductReviews
+    ProductReviews,
+    Users
 }
