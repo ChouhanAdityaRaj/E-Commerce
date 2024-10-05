@@ -2,629 +2,595 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { Product } from "../models/product.model.js";
 import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js"
-import { uploadOnCloudinary} from "../utils/uploadOnCloudinary.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { uploadOnCloudinary } from "../utils/uploadOnCloudinary.js";
 import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
 import { Review } from "../models/review.model.js";
 import { Category } from "../models/category.model.js";
 
 // Admin User Controllers
 const getAllUser = asyncHandler(async (req, res) => {
-    const {page=1, limit=10, sortBy, sortType=1} = req.query;
+  const { page, limit, sortBy = "fullName", sortType = 1, search } = req.query;
 
-    const pipeline = [];
+  const pipeline = [];
 
-    if(!(sortBy === "fullName" || sortBy === "createdAt")){
-        throw new ApiError(400, "You can only sort by fullName or createdAt");
+  if (!(sortBy === "fullName" || sortBy === "createdAt")) {
+    throw new ApiError(400, "You can only sort by fullName or createdAt");
+  }
+
+  if(search){
+  pipeline.push({
+    $match: {
+        fullName: new RegExp(`${search.split(" ").join("|")}`, 'gi')
     }
+  })
+}
 
-    if(sortBy === "fullName"){
-        pipeline.push(
-            {
-                $sort: {
-                    fullName: +sortType
-                }  
-            },
-        )
-    }
-    if(sortBy === "createdAt"){
-        pipeline.push(
-            {
-                $sort: {
-                    createdAt: +sortType
-                }  
-            },
-        )
-    }
-    
+  if (sortBy === "fullName") {
+    pipeline.push({
+      $sort: {
+        fullName: +sortType,
+      },
+    });
+  }
+  if (sortBy === "createdAt") {
+    pipeline.push({
+      $sort: {
+        createdAt: +sortType,
+      },
+    });
+  }
 
+  if (limit && page) {
     pipeline.push(
-        {
-            $limit: +page * +limit
-        },
-        {
-            $skip: +page * +limit - +limit
+      {
+        $limit: +page * +limit,
+      },
+      {
+        $skip: +page * +limit - +limit,
+      }
+    );
+  }
 
-        },
-        {
-            $project: {
-                fullName: 1,
-                email: 1,
-                isAdmin: 1,
-                createdAt: 1
-            }
-        }
-    )
+  pipeline.push({
+    $project: {
+      fullName: 1,
+      email: 1,
+      createdAt: 1,
+    },
+  });
 
-    const allUserInfo = await User.aggregate(pipeline);
-    
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            allUserInfo,
-            "All user fetched successfully"
-    ));
+  const allUserInfo = await User.aggregate(pipeline);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, allUserInfo, "All user fetched successfully"));
 });
-
 
 // Admin Product Controllers
 const addNewProduct = asyncHandler(async (req, res) => {
-    const {productName, description, price, stock, category} = req.body;
+  const { productName, description, price, stock, category } = req.body;
 
-    const isCategoryExist = await Category.findById(category);
+  const isCategoryExist = await Category.findById(category);
 
-    if(!isCategoryExist){
-        throw new ApiError(400, "Category not exist")
+  if (!isCategoryExist) {
+    throw new ApiError(400, "Category not exist");
+  }
+
+  // Handling Product Image
+  const productImageLocalPath =
+    req?.files?.productImage?.length > 0
+      ? req.files?.productImage[0]?.path
+      : undefined;
+
+  if (!productImageLocalPath) {
+    throw new ApiError(400, "Product image is required");
+  }
+
+  const productImage = await uploadOnCloudinary(productImageLocalPath);
+
+  if (!productImage) {
+    throw new ApiError(500, "Problem while uploading product image");
+  }
+
+  //Handling Product Other Images
+  const otherProductImagesFile =
+    req.files?.productOtherImages?.length > 0
+      ? req.files?.productOtherImages
+      : undefined;
+
+  let otherProductImages = [];
+
+  if (otherProductImagesFile) {
+    for (const img of otherProductImagesFile) {
+      const uplodedImage = await uploadOnCloudinary(img.path);
+
+      if (!uploadOnCloudinary) {
+        throw new ApiError(500, "Problem while upload product other image");
+      }
+
+      otherProductImages.push({ image: uplodedImage?.url });
     }
+  }
 
-    // Handling Product Image 
-    const productImageLocalPath = req?.files?.productImage?.length > 0 ? req.files?.productImage[0]?.path : undefined ;
+  // Create product in DB
+  const product = await Product.create({
+    productName,
+    productImage: productImage?.url,
+    otherProductImages,
+    description,
+    price,
+    stock,
+    category,
+  });
 
-    if(!productImageLocalPath){
-        throw new ApiError(400, "Product image is required");
-    }
-    
-    const productImage = await uploadOnCloudinary(productImageLocalPath);
-    
-    if(!productImage){
-        throw new ApiError(500, "Problem while uploading product image");
-    }
-    
-    
-    //Handling Product Other Images    
-    const otherProductImagesFile = req.files?.productOtherImages?.length > 0 ? req.files?.productOtherImages : undefined;
+  if (!product) {
+    throw new ApiError(500, "Problem while add new product");
+  }
 
-    let otherProductImages = [];
-
-    if(otherProductImagesFile){
-        for (const img of otherProductImagesFile) {
-            const uplodedImage = await uploadOnCloudinary(img.path);
-
-            if(!uploadOnCloudinary){
-                throw new ApiError(500, "Problem while upload product other image");
-            }
-
-            otherProductImages.push({image: uplodedImage?.url});
-        }
-    }
-
-
-    // Create product in DB 
-    const product = await Product.create({
-        productName,
-        productImage: productImage?.url,
-        otherProductImages,
-        description,
-        price,
-        stock,
-        category
-    });
-
-
-    if(!product){
-        throw new ApiError(500, "Problem while add new product");
-    }
-    
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            product,
-            "Product added successfully"
-        ))
+  return res
+    .status(200)
+    .json(new ApiResponse(200, product, "Product added successfully"));
 });
 
 const updateProductDetails = asyncHandler(async (req, res) => {
-    const { productid } = req.params;
-    const { productName, description, price } = req.body;
+  const { productid } = req.params;
+  const { productName, description, price } = req.body;
 
-    if(!(productName || description || price)){
-        throw new ApiError(400, "Atleast one field is required")
-    }
+  if (!(productName || description || price)) {
+    throw new ApiError(400, "Atleast one field is required");
+  }
 
-    const updateObject = {}; 
+  const updateObject = {};
 
-    for (const key of Object.keys(req.body)) {
-        updateObject[key] = req.body[key];
-    }
+  for (const key of Object.keys(req.body)) {
+    updateObject[key] = req.body[key];
+  }
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-        productid,
-        updateObject,
-        {new: true}
-    );
+  const updatedProduct = await Product.findByIdAndUpdate(
+    productid,
+    updateObject,
+    { new: true }
+  );
 
-    if(!updatedProduct){
-         throw new ApiError(500, "Problem while updating product details");
-    }
+  if (!updatedProduct) {
+    throw new ApiError(500, "Problem while updating product details");
+  }
 
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            updatedProduct,
-            "Product updated successfully"
-        ))
-
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedProduct, "Product updated successfully"));
 });
 
 const updateProductImage = asyncHandler(async (req, res) => {
-    const { productid } = req.params;
+  const { productid } = req.params;
 
-    const productImageLocalPath = req.file ? req.file.path : undefined;
+  const productImageLocalPath = req.file ? req.file.path : undefined;
 
-    if(!productImageLocalPath){
-        throw new ApiError(400, "Product image is required");
-    }
+  if (!productImageLocalPath) {
+    throw new ApiError(400, "Product image is required");
+  }
 
-    const product = await Product.findById(productid);
+  const product = await Product.findById(productid);
 
-    if(!product){
-        throw new ApiError(404, "Product not exist");
-    }
+  if (!product) {
+    throw new ApiError(404, "Product not exist");
+  }
 
-    
-    const newProductImage = await uploadOnCloudinary(productImageLocalPath);
-    
-    if(!newProductImage){
-        throw new ApiError(500, "Problem while uploading product image")
-    }
-    
-    const deletePreviousImage = await deleteFromCloudinary(product.productImage);
+  const newProductImage = await uploadOnCloudinary(productImageLocalPath);
 
-    if(!deletePreviousImage){
-        throw new ApiError(500, "Problem while deleting old product image");
-    }
+  if (!newProductImage) {
+    throw new ApiError(500, "Problem while uploading product image");
+  }
 
+  const deletePreviousImage = await deleteFromCloudinary(product.productImage);
 
-    product.productImage = newProductImage.url;
-    await product.save();
+  if (!deletePreviousImage) {
+    throw new ApiError(500, "Problem while deleting old product image");
+  }
 
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            product,
-            "Product image updated successfully"
-        ));
+  product.productImage = newProductImage.url;
+  await product.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, product, "Product image updated successfully"));
 });
 
 const addOtherProductImages = asyncHandler(async (req, res) => {
-    const { productid } = req.params;
-    const productOtherImagesFile = req?.files?.productOtherImages?.length > 0 ? req.files.productOtherImages : undefined;
+  const { productid } = req.params;
+  const productOtherImagesFile =
+    req?.files?.productOtherImages?.length > 0
+      ? req.files.productOtherImages
+      : undefined;
 
-    if(!productOtherImagesFile){
-        throw new ApiError("Image is required")
+  if (!productOtherImagesFile) {
+    throw new ApiError("Image is required");
+  }
+
+  const product = await Product.findById(productid);
+
+  if (!product) {
+    throw new ApiError(404, "Product not exist");
+  }
+
+  if (product.otherProductImages.length + productOtherImagesFile.length > 5) {
+    throw new ApiError(
+      400,
+      `Don't have more than 5 review images. You already have ${product.otherProductImages.length} And upload ${productOtherImagesFile.length}`
+    );
+  }
+
+  for (const img of productOtherImagesFile) {
+    const uplodedImage = await uploadOnCloudinary(img.path);
+
+    if (!uplodedImage) {
+      throw new ApiError(
+        500,
+        "Problem while uploading product other image on cloudinary"
+      );
     }
 
-    const product = await Product.findById(productid);
+    product.otherProductImages.push({ image: uplodedImage.url });
+  }
 
-    if(!product){
-        throw new ApiError(404, "Product not exist");
-    }
+  await product.save();
 
-    if((product.otherProductImages.length + productOtherImagesFile.length) > 5){
-        throw new ApiError(400, `Don't have more than 5 review images. You already have ${product.otherProductImages.length} And upload ${productOtherImagesFile.length}`)
-    }
-
-    for(const img of productOtherImagesFile){
-        const uplodedImage = await uploadOnCloudinary(img.path);
-
-        if(!uplodedImage){
-            throw new ApiError(500, "Problem while uploading product other image on cloudinary");
-        }
-
-        product.otherProductImages.push({image: uplodedImage.url});
-    };
-
-    await product.save();
-
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            product,
-            "Product other images uploded successfully"
-        ));
-}); 
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, product, "Product other images uploded successfully")
+    );
+});
 
 const deleteOtherProductImage = asyncHandler(async (req, res) => {
-    const {productid} = req.params;
-    const { idList } = req.body;
+  const { productid } = req.params;
+  const { idList } = req.body;
 
-    if(idList?.length <= 0){
-        throw new ApiError(400, "id list is required")
+  if (idList?.length <= 0) {
+    throw new ApiError(400, "id list is required");
+  }
+
+  const product = await Product.findById(productid);
+
+  if (!product) {
+    throw new ApiError(404, "Product not exist");
+  }
+
+  if (product.otherProductImages.length === 0) {
+    throw new ApiError(404, "There is no product images");
+  }
+
+  for (const id of idList) {
+    const index = product.otherProductImages.findIndex(
+      (el) => el._id.toString() === id
+    );
+
+    if (index === -1) {
+      throw new ApiError(400, "Image not found");
     }
 
-    const product = await Product.findById(productid);
+    const image = product.otherProductImages[index];
 
-    if(!product){
-        throw new ApiError(404, "Product not exist");
+    const deletedImage = await deleteFromCloudinary(image?.image);
+
+    if (!deletedImage) {
+      throw new ApiError(500, "Problem while deleting image");
     }
 
-    if(product.otherProductImages.length === 0){
-        throw new ApiError(404, "There is no product images")
-    }
+    product.otherProductImages.splice(index, 1);
+  }
 
-    for(const id of idList){
-        const index = product.otherProductImages.findIndex(el =>el._id.toString() === id);
+  await product.save();
 
-        if(index === -1){
-            throw new ApiError(400, "Image not found")
-        }
-
-        const image = product.otherProductImages[index];
-        
-        const deletedImage = await deleteFromCloudinary(image?.image);
-
-        if(!deletedImage){
-            throw new ApiError(500, "Problem while deleting image")
-        }
-
-        product.otherProductImages.splice(index, 1);
-    }
-
-    await product.save();
-
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            product,
-            "Product other images deleted successfully"
-        ));
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, product, "Product other images deleted successfully")
+    );
 });
 
 const updateStock = asyncHandler(async (req, res) => {
-    const { productid } = req.params;
-    const { stocks } = req.body;
+  const { productid } = req.params;
+  const { stocks } = req.body;
 
-    const product = await Product.findById(productid);
-    
-    if(!product){
-        throw new ApiError(404, "Product not exist");
-    }
-    
-    for (const stock of stocks) {
-        const index = product.stock.findIndex((el) => el.size === stock.size);
+  const product = await Product.findById(productid);
 
-        if(index === -1){
-            product.stock.push(stock);
-            continue;
-        }
+  if (!product) {
+    throw new ApiError(404, "Product not exist");
+  }
 
-        if(product.stock[index].quantity + stock.quantity < 0){
-            throw new ApiError(400, "You can't decrease quantity less then 0");
-        }
+  for (const stock of stocks) {
+    const index = product.stock.findIndex((el) => el.size === stock.size);
 
-        product.stock[index].quantity += stock.quantity;
-
+    if (index === -1) {
+      product.stock.push(stock);
+      continue;
     }
 
-    await product.save();
+    if (product.stock[index].quantity + stock.quantity < 0) {
+      throw new ApiError(400, "You can't decrease quantity less then 0");
+    }
 
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            product.stock,
-            "Stock updated successfully"
-        ))
+    product.stock[index].quantity += stock.quantity;
+  }
 
+  await product.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, product.stock, "Stock updated successfully"));
 });
 
 const updateProductCategory = asyncHandler(async (req, res) => {
-    const { productid, categoryid } = req.params;
+  const { productid, categoryid } = req.params;
 
-    const category = await Category.findById(categoryid);
-    
-    if(!category){
-        throw new ApiError(404, "Category not exist")
-    }
+  const category = await Category.findById(categoryid);
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-        productid,
-        {
-            category: category?._id
-        },
-        { new: true }
+  if (!category) {
+    throw new ApiError(404, "Category not exist");
+  }
+
+  const updatedProduct = await Product.findByIdAndUpdate(
+    productid,
+    {
+      category: category?._id,
+    },
+    { new: true }
+  );
+
+  if (!updatedProduct) {
+    throw new ApiError(404, "Product not exist");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        updatedProduct,
+        "Product category updated successfully"
+      )
     );
-
-    if(!updatedProduct){
-        throw new ApiError(404, "Product not exist");
-    }
-
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            updatedProduct,
-            "Product category updated successfully"
-        ));
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
-    const { productid } = req.params;
+  const { productid } = req.params;
 
-    const product = await Product.findById(productid);
+  const product = await Product.findById(productid);
 
-    if(!product){
-        throw new ApiError(404, "Product not exist");
-    }
+  if (!product) {
+    throw new ApiError(404, "Product not exist");
+  }
 
-    const deletedProductImage = await deleteFromCloudinary(product?.productImage);
+  const deletedProductImage = await deleteFromCloudinary(product?.productImage);
 
-    if(!deletedProductImage){
-        throw new ApiError(500, "Problem while deleting product image");
-    }
+  if (!deletedProductImage) {
+    throw new ApiError(500, "Problem while deleting product image");
+  }
 
-    if(product.otherProductImages?.length > 0){
-        product.otherProductImages.forEach(async (img) => {
-            const deletedotherProductImage = await deleteFromCloudinary(img?.image);
+  if (product.otherProductImages?.length > 0) {
+    product.otherProductImages.forEach(async (img) => {
+      const deletedotherProductImage = await deleteFromCloudinary(img?.image);
 
-            if(!deletedotherProductImage){
-                throw new ApiError(500, "Problem while deleting product other image");
-            }
-        });
-    }
+      if (!deletedotherProductImage) {
+        throw new ApiError(500, "Problem while deleting product other image");
+      }
+    });
+  }
 
-    const deletedReview = await Review.deleteMany({product: product._id});
+  const deletedReview = await Review.deleteMany({ product: product._id });
 
-    if(!deletedReview){
-        throw new ApiError(500, "Problem while deleting review");
-    }
+  if (!deletedReview) {
+    throw new ApiError(500, "Problem while deleting review");
+  }
 
-    const deletedProduct = await Product.findByIdAndDelete(productid);
+  const deletedProduct = await Product.findByIdAndDelete(productid);
 
-    if(!deletedProduct){
-        throw new ApiError(500, "Problem while deleting product");
-    }
+  if (!deletedProduct) {
+    throw new ApiError(500, "Problem while deleting product");
+  }
 
-
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            {},
-            "Product deleted successfully"
-        ))
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Product deleted successfully"));
 });
 
 const addDiscount = asyncHandler(async (req, res) => {
-    const { productid } = req.params;
-    const { discount } = req.body;
+  const { productid } = req.params;
+  const { discount } = req.body;
 
-    const product = await Product.findById(productid);
+  const product = await Product.findById(productid);
 
-    if(!product){
-        throw new ApiError(404, "Product not exist")
-    }
+  if (!product) {
+    throw new ApiError(404, "Product not exist");
+  }
 
-    const addedDiscount = await product.addDiscount(discount);
+  const addedDiscount = await product.addDiscount(discount);
 
-    if(!addedDiscount){
-        throw new ApiError(400, "Discount is already there")
-    }
+  if (!addedDiscount) {
+    throw new ApiError(400, "Discount is already there");
+  }
 
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            addedDiscount,
-            "Disscount added successfully"
-        ));
-
+  return res
+    .status(200)
+    .json(new ApiResponse(200, addedDiscount, "Disscount added successfully"));
 });
 
 const removeDiscount = asyncHandler(async (req, res) => {
-    const { productid } = req.params;
+  const { productid } = req.params;
 
-    const product = await Product.findById(productid);
+  const product = await Product.findById(productid);
 
-    if(!product){
-        throw new ApiError(404, "Product not exist")
-    }
+  if (!product) {
+    throw new ApiError(404, "Product not exist");
+  }
 
-    const removedDiscount = await product.removeDiscount();
+  const removedDiscount = await product.removeDiscount();
 
-    if(!removedDiscount){
-        throw new ApiError(400, "Discount is already 0")
-    }
+  if (!removedDiscount) {
+    throw new ApiError(400, "Discount is already 0");
+  }
 
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            removedDiscount,
-            "Disscount removed successfully"
-        ));
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, removedDiscount, "Disscount removed successfully")
+    );
 });
-
 
 // Admin Category Controllers
 
 const createCategory = asyncHandler(async (req, res) => {
-    const { name, description } = req.body;
-    const categoryImageLocalPath = req.file ? req.file.path : undefined;
+  const { name, description } = req.body;
+  const categoryImageLocalPath = req.file ? req.file.path : undefined;
 
-    if(!categoryImageLocalPath){
-        throw new ApiError(400, "Category image is required");
-    }
+  if (!categoryImageLocalPath) {
+    throw new ApiError(400, "Category image is required");
+  }
 
-    const isCategoryExist = await Category.findOne({ name });
-    
-    if(isCategoryExist){
-        throw new ApiError(409, "Category already exist with this name");
-    }
+  const isCategoryExist = await Category.findOne({ name });
 
-    const categoryImage = await uploadOnCloudinary(categoryImageLocalPath);
+  if (isCategoryExist) {
+    throw new ApiError(409, "Category already exist with this name");
+  }
 
-    if(!categoryImage){
-        throw new ApiError(500, "Problem while uploading category image")
-    }
+  const categoryImage = await uploadOnCloudinary(categoryImageLocalPath);
 
-    const newCategory = await Category.create({
-        name,
-        description,
-        image: categoryImage.url
-    })
+  if (!categoryImage) {
+    throw new ApiError(500, "Problem while uploading category image");
+  }
 
-    if(!newCategory){
-        throw new ApiError(500, "Problem while creating category");
-    }
+  const newCategory = await Category.create({
+    name,
+    description,
+    image: categoryImage.url,
+  });
 
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            newCategory,
-            "Category created successfully"
-        ));
+  if (!newCategory) {
+    throw new ApiError(500, "Problem while creating category");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, newCategory, "Category created successfully"));
 });
 
-const updateCategor = asyncHandler(async (req, res) =>{
-    const { categoryid } = req.params;
-    const { name, description } = req.body;
+const updateCategor = asyncHandler(async (req, res) => {
+  const { categoryid } = req.params;
+  const { name, description } = req.body;
 
-    if(!( name || description )){
-        throw new ApiError(400, "At lest one field is required")
-    }
+  if (!(name || description)) {
+    throw new ApiError(400, "At lest one field is required");
+  }
 
-    const category = await Category.findById(categoryid)
+  const category = await Category.findById(categoryid);
 
-    if(!category){
-        throw new ApiError(404, "Category not exist");
-    }
+  if (!category) {
+    throw new ApiError(404, "Category not exist");
+  }
 
-    if(category.name === "uncategorized"){
-        throw new ApiError(401, "You can't delete this category")
-    }
+  if (category.name === "uncategorized") {
+    throw new ApiError(401, "You can't delete this category");
+  }
 
-    const updateObject = {};
+  const updateObject = {};
 
-    for (const key of Object.keys(req.body)) {
-        updateObject[key] = req.body[key];
-    }
+  for (const key of Object.keys(req.body)) {
+    updateObject[key] = req.body[key];
+  }
 
-    const updatedCategory = await Category.findByIdAndUpdate(
-        categoryid,
-        updateObject,
-        {new: true}
-    )
+  const updatedCategory = await Category.findByIdAndUpdate(
+    categoryid,
+    updateObject,
+    { new: true }
+  );
 
-    if(!updatedCategory){
-        throw new ApiError(500, "Problem while updating category")
-    }
+  if (!updatedCategory) {
+    throw new ApiError(500, "Problem while updating category");
+  }
 
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            updatedCategory,
-            "Category updated successfully"
-        ))
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, updatedCategory, "Category updated successfully")
+    );
 });
 
 const deleteCategory = asyncHandler(async (req, res) => {
-    const { categoryid, newCategoryid=null } = req.params;
+  const { categoryid, newCategoryid = null } = req.params;
 
-    const category = await Category.findById(categoryid)
+  const category = await Category.findById(categoryid);
 
-    if(!category){
-        throw new ApiError(404, "Category not exist");
+  if (!category) {
+    throw new ApiError(404, "Category not exist");
+  }
+
+  if (category.name === "uncategorized") {
+    throw new ApiError(401, "You can't delete this category");
+  }
+
+  const newCategory = await Category.findById(newCategoryid);
+
+  if (newCategory) {
+    const updateProductCategory = await Product.updateMany(
+      { category: categoryid },
+      {
+        category: newCategory?._id,
+      },
+      { new: true }
+    );
+
+    if (!updateProductCategory) {
+      throw new ApiError(500, "Problem changing product category");
     }
+  }
 
-    if(category.name === "uncategorized"){
-        throw new ApiError(401, "You can't delete this category")
+  if (!newCategory) {
+    const defaultCategory = await Category.findOne({ name: "uncategorized" });
+
+    const updateProductCategory = await Product.updateMany(
+      { category: categoryid },
+      {
+        category: defaultCategory._id,
+      },
+      { new: true }
+    );
+
+    if (!updateProductCategory) {
+      throw new ApiError(500, "Problem changing product category");
     }
+  }
 
-    const newCategory = await Category.findById(newCategoryid);
+  const deletedCategory = await Category.findByIdAndDelete(categoryid);
 
-    if(newCategory){
-        const updateProductCategory = await Product.updateMany(
-            {category: categoryid},
-            {
-                category: newCategory?._id
-            },
-            {new: true}
-        );
+  if (!deletedCategory) {
+    throw new ApiError(500, "Problem while deleting category");
+  }
 
-        if(!updateProductCategory){
-            throw new ApiError(500, "Problem changing product category")
-        }
-    }
-
-    if(!newCategory){
-        const defaultCategory = await Category.findOne({name: "uncategorized"});
-
-        const updateProductCategory = await Product.updateMany(
-            {category: categoryid},
-            {
-                category: defaultCategory._id
-            },
-            {new: true}
-        );
-
-        if(!updateProductCategory){
-            throw new ApiError(500, "Problem changing product category")
-        }
-    }
-
-    const deletedCategory = await Category.findByIdAndDelete(categoryid);
-
-    if(!deletedCategory){
-        throw new ApiError(500, "Problem while deleting category");
-    }
-
-
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            {},
-            "Category deleated successfully"
-        ))
-})
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Category deleated successfully"));
+});
 
 export {
-    // User exports
-    getAllUser,
+  // User exports
+  getAllUser,
 
-    //Product exports
-    addNewProduct,
-    updateProductDetails,
-    updateProductImage,
-    addOtherProductImages,
-    deleteOtherProductImage,
-    updateStock,
-    updateProductCategory,
-    addDiscount,
-    removeDiscount,
+  //Product exports
+  addNewProduct,
+  updateProductDetails,
+  updateProductImage,
+  addOtherProductImages,
+  deleteOtherProductImage,
+  updateStock,
+  updateProductCategory,
+  addDiscount,
+  removeDiscount,
 
-    //Category exports
-    deleteProduct,
-    createCategory,
-    updateCategor,
-    deleteCategory
-}
+  //Category exports
+  deleteProduct,
+  createCategory,
+  updateCategor,
+  deleteCategory,
+};
