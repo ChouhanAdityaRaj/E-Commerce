@@ -1,6 +1,13 @@
 import config  from "../config/config";
 
 class AdminService {
+
+    verifyAdmin(){
+        return {
+            urlPath: `${config.backendUrl}/admin/verify-admin`
+        }
+    }
+
     getAllUsers({search, sortBy, sortType, limit, page}){
         let url = `${config.backendUrl}/admin/user`;
 

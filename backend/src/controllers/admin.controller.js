@@ -8,6 +8,26 @@ import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
 import { Review } from "../models/review.model.js";
 import { Category } from "../models/category.model.js";
 
+const verifyIsAdmin = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user?._id);
+
+  if(!user){
+    throw new ApiError(404, "User not exist");
+  }
+
+  if(!user.isAdmin){
+    throw new ApiError(403, "Access Denied");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      {isAdmin: true},
+      "Access Granted"
+    ))
+});
+
 // Admin User Controllers
 const getAllUser = asyncHandler(async (req, res) => {
   const { page, limit, sortBy = "fullName", sortType = 1, search } = req.query;
@@ -574,6 +594,8 @@ const deleteCategory = asyncHandler(async (req, res) => {
 });
 
 export {
+  verifyIsAdmin,
+
   // User exports
   getAllUser,
 

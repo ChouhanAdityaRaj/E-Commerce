@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { getAllUser, addNewProduct, updateProductDetails, updateProductImage, addOtherProductImages, deleteOtherProductImage, updateStock, updateProductCategory, deleteProduct, addDiscount, removeDiscount, createCategory, updateCategor, deleteCategory } from "../controllers/admin.controller.js";
+import { verifyIsAdmin, getAllUser, addNewProduct, updateProductDetails, updateProductImage, addOtherProductImages, deleteOtherProductImage, updateStock, updateProductCategory, deleteProduct, addDiscount, removeDiscount, createCategory, updateCategor, deleteCategory } from "../controllers/admin.controller.js";
 import { verifyAdmin } from "../middlewares/verifyAdmin.middleware.js";
 import { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, addDiscountSchema, createCategorySchema, updateCategorySchema} from "../validations/admin.schema.js";
 import { validate } from "../middlewares/validate.middleware.js";
@@ -10,6 +10,8 @@ const router = Router();
 
 router.use(verifyJWT);
 router.use(verifyAdmin);
+
+router.route("/verify-admin").get(verifyIsAdmin);
 
 
 // Admin User Routes
