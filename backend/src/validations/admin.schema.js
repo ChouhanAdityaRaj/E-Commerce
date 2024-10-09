@@ -43,7 +43,7 @@ const addNewProductSchema = z.object({
     z.number({invalid_type_error: "Price is required and must be number"}).positive({message: "Price must be posative number"})
   ),
   category: z.string({required_error:"Category is required"}).refine((value) => mongoose.Types.ObjectId.isValid(value), {
-    message: "Invalid ObjectId",
+    message: "Category is required",
   }),
   stock: z.array(stockSubSchema, {message: "Stock is required"}).nonempty({message: "Stock is required"}),
 });

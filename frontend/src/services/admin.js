@@ -33,6 +33,15 @@ class AdminService {
         };
     }
 
+    addNewProduct(data){
+        return {
+            urlPath: `${config.backendUrl}/admin/product`,
+            method: "post",
+            data,
+            isFormData: true
+        };
+    }
+
 }
 
 const adminService = new AdminService();

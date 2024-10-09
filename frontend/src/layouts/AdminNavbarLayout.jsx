@@ -52,7 +52,7 @@ function AdminNavbarLayout() {
                   key={i}
                   to={nav.path}
                   className={({ isActive }) =>
-                    `px-5 font-semibold text-lg block p-2 rounded hover:bg-gray-200 ${
+                    `px-5 font-semibold text-lg block p-2 rounded ${
                       isActive ? "bg-red-400 text-white" : ""
                     } flex items-center justify-start`
                   }

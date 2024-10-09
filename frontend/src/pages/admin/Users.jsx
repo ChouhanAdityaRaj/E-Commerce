@@ -110,9 +110,7 @@ function Users() {
 
         {/* Search bar */}
         <form onSubmit={handleSubmit(handleSearchUser)} className="flex justify-center">
-          <input type="text" placeholder="Search name"  className="border py-2 px-2 text-xl" {...register("query", {
-            
-          })}/>
+          <input type="text" placeholder="Search name"  className="border py-2 px-2 text-xl" {...register("query")}/>
           <button type="submit" disabled={isButtonDisable} className="text-xl font-medium hover:underline text-center px-3 text-white bg-red-400 hover:text-gray-300 hover:bg-red-100">
             Search
           </button>

@@ -10,6 +10,8 @@ import Cart from "./Cart";
 import ProductReviews from "./ProductReviews";
 import CollectionProductList from "./collection/CollectionProductList";
 import Users from "./admin/Users";
+import Products from "./admin/Products";
+import CreateProduct from "./admin/CreateProduct";
 
 export {
     Login,
@@ -23,5 +25,7 @@ export {
     Address,
     Cart,
     ProductReviews,
-    Users
+    Users,
+    Products,
+    CreateProduct
 }

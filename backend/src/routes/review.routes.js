@@ -7,14 +7,14 @@ import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-router.use(verifyJWT);
+router.route("/p/:productid").get(getProductReviews);
 
+router.use(verifyJWT);
 router.route("/p/:productid").post(upload.fields([{name: "reviewImages", maxCount: 3}]),validate(createReviewSchema), createReview);
 router.route("/:reviewid").patch(validate(updateReviewSchema), updateReview);
 router.route("/:reviewid/images").delete(deleteReviewImage);
 router.route("/:reviewid/images").patch(upload.fields([{name: "reviewImages", maxCount: 3}]), addReviewImages);
 router.route("/:reviewid").delete(deleteReview)
 router.route("/:reviewid").get(getReviewById)
-router.route("/p/:productid").get(getProductReviews);
 
 export default router;
