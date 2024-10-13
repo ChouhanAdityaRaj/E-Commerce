@@ -537,6 +537,49 @@ const updateCategor = asyncHandler(async (req, res) => {
     );
 });
 
+const updateCategoryImage = asyncHandler(async (req, res) => {
+  const { categoryid } = req.params;
+
+  const categoryImageLocalPath = req.file ? req.file.path : undefined;
+
+
+  const category = await Category.findById(categoryid);
+
+  if(!category){
+    throw new ApiError(404, "Category not exist");
+  }
+
+  if(!categoryImageLocalPath){
+    throw new ApiError(400, "Image is required");
+  }
+
+  const deletedImage = await deleteFromCloudinary(category.image);
+
+  if(!deletedImage){
+    throw new ApiError(500, "Problem while deleteing old category image");
+  }
+
+  const newCategoryImage = await uploadOnCloudinary(categoryImageLocalPath);
+
+  if(!newCategoryImage){
+    throw new ApiError(500, "Problem while uploading new category image");
+  }
+
+  category.image = newCategoryImage.url;
+  const updatedCategory = await category.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(
+        200,
+        updatedCategory,
+        "Category Updated Successfully"
+      )
+    )
+
+
+})
+
 const deleteCategory = asyncHandler(async (req, res) => {
   const { categoryid, newCategoryid = null } = req.params;
 
@@ -609,10 +652,11 @@ export {
   updateProductCategory,
   addDiscount,
   removeDiscount,
+  deleteProduct,
 
   //Category exports
-  deleteProduct,
   createCategory,
   updateCategor,
+  updateCategoryImage,
   deleteCategory,
 };
