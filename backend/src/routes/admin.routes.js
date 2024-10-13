@@ -36,7 +36,7 @@ router.route("/product").post(
 router.route("/product/:productid/details").patch(validate(updateProductDetailsSchema), updateProductDetails);
 router.route("/product/:productid/image").patch(upload.single("productImage"), updateProductImage);
 router.route("/product/:productid/other-image").patch(upload.fields([{name: "productOtherImages", maxCount: 5}]), addOtherProductImages);
-router.route("/product/:productid/other-image").delete(deleteOtherProductImage);
+router.route("/product/:productid/other-image/delete").patch(deleteOtherProductImage);
 router.route("/product/:productid/stock").patch(validate(updateStockSchema), updateStock);
 router.route("/product/:productid").delete(deleteProduct);
 router.route("/product/:productid/category/:categoryid").patch(updateProductCategory);

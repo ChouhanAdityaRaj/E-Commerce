@@ -13,7 +13,7 @@ const stocksSchema = new mongoose.Schema({
   size: {
     type: String,
     required: true,
-    enum: ["XS", "S", "M", "L",  "XL", "XXl", "XXXL", "6", "7", "8", "9", "10", "11", "12"],
+    enum: ["XS", "S", "M", "L",  "XL", "XXL", "XXXL", "6", "7", "8", "9", "10", "11", "12"],
   },
   quantity: {
     type: Number,
