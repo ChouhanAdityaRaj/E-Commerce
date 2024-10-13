@@ -1,5 +1,5 @@
 import { AuthLayout, AdminNavbarLayout } from "../layouts";
-import { Users, Products, CreateProduct } from "../pages";
+import { Users, Products, CreateProduct, UpdateProduct } from "../pages";
 
 const AdminRoutes = [
   {
@@ -33,6 +33,15 @@ const AdminRoutes = [
               </AuthLayout>
             ),
           },
+          {
+            path: "update-product/:productid",
+            element: (
+              <AuthLayout>
+                <UpdateProduct />
+              </AuthLayout>
+            ),
+          },
+
         ]
 
         

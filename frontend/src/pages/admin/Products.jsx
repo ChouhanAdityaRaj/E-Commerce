@@ -3,7 +3,8 @@ import { FaSearch, FaStar, FaRegStar, FaEdit, FaTrash } from "react-icons/fa";
 import { GrPowerReset } from "react-icons/gr";
 import { apiHandler } from "../../utils";
 import productService from "../../services/product";
-import { ErrorMessage, Loader } from "../../components";
+import adminService from "../../services/admin";
+import { ErrorMessage, Loader, MessageAlert } from "../../components";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
@@ -26,6 +27,9 @@ function Products() {
   const [sortTypeFilter, setSortTypeFilter] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState("");
+  const [showRemoveConform, setShowRemoveConform] = useState({status: false, id: null});
+  const [errorAlertMessage, setErrorAlertMessage] = useState("")
+  const [responseAlertMessage, setResponseAlertMessage] = useState("")
 
   useEffect(() => {
     (async () => {
@@ -82,6 +86,25 @@ function Products() {
     setLoading(false);
   };
 
+  const handleRemoveProduct = async (id) => {
+    setErrorAlertMessage("")
+    setLoading(true)
+    setShowRemoveConform({status: false, id: null})
+
+    const [response, error] = await apiHandler(adminService.deleteProductById(id));
+
+    if(response){
+      setResponseAlertMessage(response.message);
+      setReload(!reload);
+    }
+
+    if(error){
+      setErrorAlertMessage(error.message);
+    }
+
+    setLoading(false); 
+  }
+
   const DateTimeFormate = (isoString) => {
     const date = new Date(isoString);
 
@@ -109,11 +132,24 @@ function Products() {
   if (products) {
     return (
       <div className="p-6 bg-gray-100 min-h-screen">
+        {responseAlertMessage && (
+          <MessageAlert
+            message={responseAlertMessage}
+            isError={false}
+            handleMessage={() => setResponseAlertMessage("")}
+          />
+        )}
+        {errorAlertMessage && (
+          <MessageAlert
+            message={errorAlertMessage}
+            handleMessage={() => setErrorAlertMessage("")}
+          />
+        )}
         {/* Top Section with Add Button and Search Bar */}
         <div className="mb-6 flex justify-between items-center">
           {/* Add New Product Button */}
           <Link
-            to={"create-product"}
+            to={isButtonDisable ? "#" : "/admin/products/create-product"}
             className="bg-indigo-500 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition"
           >
             Add New Product
@@ -226,10 +262,10 @@ function Products() {
 
                 {/* Update and Remove Buttons */}
                 <div className="mt-4 flex justify-start space-x-2">
-                  <button className="flex items-center bg-indigo-500 text-white px-3 py-1 rounded shadow hover:bg-indigo-600 transition">
+                  <Link to={isButtonDisable ? "#" : `/admin/products/update-product/${product._id}`} className="flex items-center bg-indigo-500 text-white px-3 py-1 rounded shadow hover:bg-indigo-600 transition">
                     <FaEdit className="mr-2" /> Update
-                  </button>
-                  <button className="flex items-center bg-red-500 text-white px-3 py-1 rounded shadow hover:bg-red-600 transition">
+                  </Link>
+                  <button disabled={isButtonDisable} onClick={() => setShowRemoveConform({status: true, id: product._id})} className="flex items-center bg-red-500 text-white px-3 py-1 rounded shadow hover:bg-red-600 transition">
                     <FaTrash className="mr-2" /> Remove
                   </button>
                 </div>
@@ -305,6 +341,37 @@ function Products() {
             />
           )}
         </div>
+
+
+        {showRemoveConform.status && (
+        <div className="fixed inset-0 flex items-center justify-center z-30">
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-black opacity-50"
+            onClick={() => setShowRemoveConform({status:false, id: null})}
+          ></div>
+
+
+          {/*Remove Confirmation Box */}
+          <div className="relative z-40 p-6 bg-white rounded-lg shadow-lg w-80 text-center">
+            <p className="mb-4 text-lg">Are you sure you want to delete product?</p>
+            <div className="flex justify-center space-x-4">
+              <button
+                className="bg-green-500 text-white px-4 py-2 rounded"
+                onClick={() => handleRemoveProduct(showRemoveConform.id)}
+              >
+                Yes
+              </button>
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+                onClick={() => setShowRemoveConform({status:false, id: null})}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     );
   }

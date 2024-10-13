@@ -12,6 +12,7 @@ import CollectionProductList from "./collection/CollectionProductList";
 import Users from "./admin/Users";
 import Products from "./admin/Products";
 import CreateProduct from "./admin/CreateProduct";
+import UpdateProduct from "./admin/UpdateProduct";
 
 export {
     Login,
@@ -27,5 +28,6 @@ export {
     ProductReviews,
     Users,
     Products,
-    CreateProduct
+    CreateProduct,
+    UpdateProduct
 }
