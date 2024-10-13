@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 const getAllCategories = asyncHandler(async (req, res) => {
 
-    const categories = await Category.find().select("-updatedAt -createdAt");
+    const categories = await Category.find().select("-updatedAt");
 
     if(!categories){
         throw new ApiError(500, "Problem while fetching categories");

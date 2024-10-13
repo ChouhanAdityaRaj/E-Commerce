@@ -26,7 +26,7 @@ function AdminNavbarLayout() {
     },
     {
       name: "Categories",
-      path: "categorys",
+      path: "categories",
       icon: <BiSolidCategoryAlt />,
       activeStatus: true,
     },

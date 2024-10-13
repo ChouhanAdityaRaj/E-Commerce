@@ -13,6 +13,7 @@ import Users from "./admin/Users";
 import Products from "./admin/Products";
 import CreateProduct from "./admin/CreateProduct";
 import UpdateProduct from "./admin/UpdateProduct";
+import Categories from "./admin/Categories";
 
 export {
     Login,
@@ -29,5 +30,6 @@ export {
     Users,
     Products,
     CreateProduct,
-    UpdateProduct
+    UpdateProduct,
+    Categories
 }
