@@ -15,6 +15,7 @@ import CreateProduct from "./admin/CreateProduct";
 import UpdateProduct from "./admin/UpdateProduct";
 import Categories from "./admin/Categories";
 import CreateCategory from "./admin/CreateCategory";
+import UpdateCategory from "./admin/UpdateCategory";
 
 export {
     Login,
@@ -33,5 +34,6 @@ export {
     CreateProduct,
     UpdateProduct,
     Categories,
-    CreateCategory
+    CreateCategory,
+    UpdateCategory
 }

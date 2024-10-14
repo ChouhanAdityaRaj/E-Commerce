@@ -127,11 +127,12 @@ class AdminService {
         }
     }
 
-    updateCategoryImage(categoryId, categoryImage){
+    updateCategoryImage(categoryId, data){
         return {
             urlPath: `${config.backendUrl}/admin/category/${categoryId}/image`,
             method: "patch",
-            data: categoryImage
+            data,
+            isFormData: true
         }
     }
 

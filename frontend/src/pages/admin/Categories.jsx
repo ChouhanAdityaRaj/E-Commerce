@@ -133,7 +133,7 @@ function Categories() {
             
             {category.name !== "uncategorized" &&(<div className="space-x-2">
               <Link
-                to={`/admin/category/update-category/${category?._id}`}
+                to={`/admin/categories/update-category/${category?._id}`}
                 className="px-7 py-3 text-white bg-indigo-400 hover:bg-indigo-500 rounded"
               >
                 Update
