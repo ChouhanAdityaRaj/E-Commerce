@@ -47,15 +47,16 @@ function CollectionProductList() {
     }
   }
 
-  if (error.message === "input must be a 24 character hex string, 12 byte Uint8Array, or an integer") {
-    return <ErrorMessage message={"Invalid Product"} />;
-  }
   if (error) {
-    return <ErrorMessage message={error.message} />;
+    return ( 
+      <ErrorMessage message={error.message} />
+    );
   }
 
   if (loading) {
-    return <Loader />;
+    return (
+      <Loader />
+    );
   }
 
   if (response) {

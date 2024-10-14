@@ -4,12 +4,17 @@ import { useForm } from "react-hook-form";
 import authService from "../../services/auth";
 import {apiHandler} from "../../utils"
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { login  as authLogin} from "../../store/authSlice";
+
 
 
 function Signup() {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const authStatus = useSelector((state) => state.auth.status);
+  const dispatch = useDispatch()
+
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +32,12 @@ function Signup() {
     const [response, error] = await apiHandler(authService.signup({fullName, email, password}));
   
     if(response){
-      navigate("/verify-email");
+      dispatch(authLogin(response.data));
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        navigate('/');
+      }
     }
 
     if(error){
@@ -105,7 +115,7 @@ function Signup() {
             disabled={loading}
             className="w-full bg-amber-600 text-white font-semibold py-2 sm:py-3 rounded-lg hover:bg-amber-700 transition duration-300"
           >
-            Login
+            Signup
           </button>
         </form>
         <p className="text-center text-amber-700 mt-4">

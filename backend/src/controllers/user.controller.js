@@ -28,13 +28,24 @@ const signup = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while registering the user");
   }
 
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    user?._id
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
   return res
     .status(201)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json(
       new ApiResponse(
         201,
         createdUser,
-        "User Registered successfully please login"
+        "User Registered successfully"
       )
     );
 });
