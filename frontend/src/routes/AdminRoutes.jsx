@@ -1,5 +1,5 @@
 import { AuthLayout, AdminNavbarLayout } from "../layouts";
-import { Users, Products, CreateProduct, UpdateProduct, Categories } from "../pages";
+import { Users, Products, CreateProduct, UpdateProduct, Categories, CreateCategory } from "../pages";
 
 const AdminRoutes = [
   {
@@ -44,13 +44,21 @@ const AdminRoutes = [
         ]
       },
       {
-        path: "Categories",
+        path: "categories",
         children: [
           {
             path: "",
             element: (
               <AuthLayout>
                 <Categories />
+              </AuthLayout>
+            ),
+          },
+          {
+            path: "create-category",
+            element: (
+              <AuthLayout>
+                <CreateCategory />
               </AuthLayout>
             ),
           }

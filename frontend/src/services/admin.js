@@ -2,6 +2,8 @@ import config  from "../config/config";
 
 class AdminService {
 
+
+    //Admin User Services
     verifyAdmin(){
         return {
             urlPath: `${config.backendUrl}/admin/verify-admin`
@@ -40,6 +42,7 @@ class AdminService {
         };
     }
 
+    // Admin Product Services
     addNewProduct(data){
         return {
             urlPath: `${config.backendUrl}/admin/product`,
@@ -105,6 +108,40 @@ class AdminService {
             data,
         };
     }
+
+    // Admin Categories Services
+    createCategory(data){
+        return {
+            urlPath: `${config.backendUrl}/admin/category/`,
+            method: "post",
+            data,
+            isFormData: true
+        }
+    }
+
+    updateCategoryDetails(categoryId, {name, description}){
+        return {
+            urlPath: `${config.backendUrl}/admin/category/${categoryId}`,
+            method: "patch",
+            data: {name, description}
+        }
+    }
+
+    updateCategoryImage(categoryId, categoryImage){
+        return {
+            urlPath: `${config.backendUrl}/admin/category/${categoryId}/image`,
+            method: "patch",
+            data: categoryImage
+        }
+    }
+
+    deleteCategory(categoryId){
+        return {
+            urlPath: `${config.backendUrl}/admin/category/${categoryId}`,
+            method: "delete",
+        }
+    }
+
 
 }
 
