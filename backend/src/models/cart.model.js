@@ -11,7 +11,7 @@ const itemsSchema = new mongoose.Schema({
     size: {
         type: String,
         required: true,
-        enum: ["XS", "S", "M", "L",  "XL", "XXl", "XXXL", "6", "7", "8", "9", "10", "11", "12"],
+        enum: ["XS", "S", "M", "L",  "XL", "XXL", "XXXL", "6", "7", "8", "9", "10", "11", "12"],
         trim: true
     },
     quantity: {
@@ -31,9 +31,12 @@ const itemsSchema = new mongoose.Schema({
 const cartSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "User"
     },
     items: [itemsSchema],
+    shippingCharge: {
+        type: Number,
+    },
     totalAmount: {
         type: Number,
     }
@@ -54,7 +57,11 @@ itemsSchema.pre("save", async function(next) {
 });
 
 cartSchema.pre("save", function(next){
-    this.totalAmount = this.items.reduce((acc, item) => acc+item.totalPrice, 0);
+    const totalProductAmount = this.items.reduce((acc, item) => acc+item.totalPrice, 0);
+
+    this.shippingCharge = totalProductAmount > 599 ? 0 : 100;
+
+    this.totalAmount = totalProductAmount + this.shippingCharge;
     next()
 });
 

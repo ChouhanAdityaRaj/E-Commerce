@@ -5,7 +5,7 @@ import {MAX_DISCOUNT} from "../constants.js";
 const stockSubSchema = z.object({
   size: z.preprocess(
     (val) => val.toUpperCase().trim(),
-    z.enum(["XS", "S", "M", "L",  "XL", "XXl", "XXXL", "6", "7", "8", "9", "10", "11", "12"], {message: 'Invalid size type'}),
+    z.enum(["XS", "S", "M", "L",  "XL", "XXL", "XXXL", "6", "7", "8", "9", "10", "11", "12"], {message: 'Invalid size type'}),
   ),
 
   quantity: z.preprocess(

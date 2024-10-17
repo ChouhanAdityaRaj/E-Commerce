@@ -220,7 +220,7 @@ function ProductDetail() {
                 />
                 <button
                   className="px-4 w-[10vw] h-[5vh] lg:h-[7vh] xl:w-[3vw] xl:h-[3vh] text-2xl md:text-4xl lg:text-6xl xl:text-3xl"
-                  onClick={() => setQuantity(quantity + 1)}
+                  onClick={() => setQuantity(quantity < 10 ? quantity + 1 : 10)}
                   disabled={!avilableSizes.length}
                 >
                   +

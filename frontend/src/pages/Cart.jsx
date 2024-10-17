@@ -219,6 +219,9 @@ function Cart() {
 
           {/* Total Section */}
           <div className="w-[100%] flex justify-center">
+            <p className=" absolute right-[5.2rem] lg:right-[9.4rem] xl:right-[12.5rem] text-md font-semibold">
+              Shipping: ₹{cart.shippingCharge}
+            </p>
           <div className="w-[100%] lg:w-[80%]  mt-6 lg:mx-5 flex lg:justify-end items-center">
             <button className=" transition-colors ease-in-out duration-500 mx-5 border-2 border-gray-300 bg-black text-white font-bold px-7 py-3 rounded-full hover:text-black hover:bg-white">Buy Now</button>
             <p className="text-2xl font-bold">

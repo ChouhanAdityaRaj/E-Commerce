@@ -27,6 +27,12 @@ const addToCart = asyncHandler(async (req, res) => {
         quantity
     }
 
+    const [productStock] = product.stock.filter((item) => item.size === size);
+
+    if(productStock.quantity < quantity){
+        throw new ApiError(409, "Requested quantity is not available in stock. Please add less quantity");
+    }
+
     let cart = await Cart.findOne({user: req.user._id});
 
     if(cart){
@@ -327,6 +333,7 @@ const getUserCartInfo = asyncHandler(async (req, res) => {
                     }
                 },
                 totalAmount:  {$first: "$totalAmount"},
+                shippingCharge: { $first: "$shippingCharge" },
             }
         }
     ]); 
