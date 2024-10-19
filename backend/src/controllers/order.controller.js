@@ -119,8 +119,42 @@ const getUserOrdersOverview = asyncHandler(async (req, res) => {
         ))
 })
 
+const cancelOrder = asyncHandler(async (req, res) => {
+    const { orderid } = req.params;
+
+    const order = await Order.findById(orderid);
+
+    if(!order){
+        throw new ApiError(404, "Order not exist.");
+    }
+
+    if(req.user?._id.toString() !== order.user.toString()){
+        throw new ApiError(401, "Invalid User.")
+    }
+
+    const currentDateTime = new Date();
+
+    if((currentDateTime - order.createdAt) > (24 * 60 * 60 * 1000)){ 
+        throw new ApiError(409, "You can't cancel the order because the time limit has expired.");
+    } 
+
+    const deletedOrder = await Order.findByIdAndDelete(orderid);
+
+    if(!deletedOrder){
+        throw new ApiError(500, "Problem while canceling Order.");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            {},
+            "Order Canceled Successfully"
+        ))
+});
 
 export {
     createOrder,
-    getUserOrdersOverview
+    getUserOrdersOverview,
+    cancelOrder
 }
