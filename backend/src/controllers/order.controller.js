@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { Cart } from "../models/cart.model.js";
 import { Address } from "../models/address.model.js";
 import { Order } from "../models/order.model.js";
+import mongoose from "mongoose";
 
 const createOrder = asyncHandler(async (req, res) => {
     const { cartid, addressid } = req.params;
@@ -37,7 +38,11 @@ const createOrder = asyncHandler(async (req, res) => {
     const order = await Order.create({
         user: req.user._id,
         address: address._id,
-        productsDetails: cart?._id,
+        productsDetails: {
+            items: [...cart?.items],
+            shippingCharge: cart?.shippingCharge,
+            totalAmount: cart?.totalAmount
+        },
         total: cart.totalAmount
     })
 
@@ -59,7 +64,63 @@ const createOrder = asyncHandler(async (req, res) => {
 
 })
 
+const getUserOrdersOverview = asyncHandler(async (req, res) => {
+    const orders = await Order.aggregate([
+        {
+            $match: {
+                user: new mongoose.Types.ObjectId(`${req.user._id}`)
+            }
+        },
+        {
+            $lookup: {
+                from: "products",
+                localField: "productsDetails.items.product",
+                foreignField: "_id",
+                as: "products",
+                pipeline: [
+                    {
+                        $project: {
+                            productName: 1,
+                            productImage: 1,
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $unwind: '$products',
+        },
+        {
+          $group: {
+            _id: '$_id', 
+            productsDetail: {
+              $push: {
+                product: '$products',
+              },
+            },
+            createdAt: { $first: "$createdAt"},
+            total: {$first: "$total"},
+            orderStatus: {$first: "$orderStatus"}
+
+          },
+        },
+    ])
+
+    if(!orders){
+        throw new ApiError(500, "Problem while fetching Orders")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            orders,
+            "Orders Overview fetched successfully"
+        ))
+})
+
 
 export {
-    createOrder
+    createOrder,
+    getUserOrdersOverview
 }

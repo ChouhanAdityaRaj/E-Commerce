@@ -1,5 +1,20 @@
 import mongoose from "mongoose";
 
+const productsDetailsSchema = new mongoose.Schema({
+    items: {
+        type: Array,
+        required: true
+    },
+    shippingCharge: {
+        type: Number,
+        required: true,
+    },
+    totalAmount: {
+        type: Number,
+        required: true,
+    },
+})
+
 const orderSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -17,8 +32,8 @@ const orderSchema = new mongoose.Schema({
         default: "Pending"
     },
     productsDetails: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Cart",
+        type: productsDetailsSchema,
+        required: true,
     },
     total: {
         type: Number,
