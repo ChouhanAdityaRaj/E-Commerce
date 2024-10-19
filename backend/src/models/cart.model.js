@@ -59,7 +59,12 @@ itemsSchema.pre("save", async function(next) {
 cartSchema.pre("save", function(next){
     const totalProductAmount = this.items.reduce((acc, item) => acc+item.totalPrice, 0);
 
-    this.shippingCharge = totalProductAmount > 599 ? 0 : 100;
+    if(totalProductAmount === 0 || totalProductAmount > 599){
+        this.shippingCharge = 0;
+    } else {
+        this.shippingCharge = 100;
+    }
+
 
     this.totalAmount = totalProductAmount + this.shippingCharge;
     next()
