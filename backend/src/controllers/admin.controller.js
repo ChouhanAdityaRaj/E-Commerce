@@ -8,6 +8,7 @@ import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
 import { Review } from "../models/review.model.js";
 import { Category } from "../models/category.model.js";
 import { Order } from "../models/order.model.js";
+import mongoose from "mongoose";
 
 const verifyIsAdmin = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user?._id);
@@ -22,11 +23,7 @@ const verifyIsAdmin = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(
-      200,
-      { isAdmin: true },
-      "Access Granted"
-    ))
+    .json(new ApiResponse(200, { isAdmin: true }, "Access Granted"));
 });
 
 // Admin User Controllers
@@ -42,9 +39,9 @@ const getAllUser = asyncHandler(async (req, res) => {
   if (search) {
     pipeline.push({
       $match: {
-        fullName: new RegExp(`${search.split(" ").join("|")}`, 'gi')
-      }
-    })
+        fullName: new RegExp(`${search.split(" ").join("|")}`, "gi"),
+      },
+    });
   }
 
   if (sortBy === "fullName") {
@@ -543,7 +540,6 @@ const updateCategoryImage = asyncHandler(async (req, res) => {
 
   const categoryImageLocalPath = req.file ? req.file.path : undefined;
 
-
   const category = await Category.findById(categoryid);
 
   if (!category) {
@@ -571,15 +567,10 @@ const updateCategoryImage = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(
-      200,
-      updatedCategory,
-      "Category Updated Successfully"
-    )
-    )
-
-
-})
+    .json(
+      new ApiResponse(200, updatedCategory, "Category Updated Successfully")
+    );
+});
 
 const deleteCategory = asyncHandler(async (req, res) => {
   const { categoryid, newCategoryid = null } = req.params;
@@ -637,11 +628,10 @@ const deleteCategory = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Category deleated successfully"));
 });
 
-
 // Admin order Controllers
 
 const getAllOrders = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, sortBy, sortType = 1 } = req.query;
+  const { page, limit, sortBy="createdAt", sortType = -1 } = req.query;
 
   const pipeline = [
     {
@@ -654,42 +644,41 @@ const getAllOrders = asyncHandler(async (req, res) => {
           {
             $project: {
               fullName: 1,
-            }
-          }
-        ]
-      }
+            },
+          },
+        ],
+      },
     },
     {
       $addFields: {
-        user: { $first: "$user" }
+        user: { $first: "$user" },
       },
     },
   ];
 
   if (sortBy === "createdAt") {
-    pipeline.push(
-      {
-        $sort: {
-          createdAt: +sortType
-        }
-      }
-    )
+    pipeline.push({
+      $sort: {
+        createdAt: +sortType,
+      },
+    });
   }
 
-  pipeline.push(
+  if(limit && page){
+    pipeline.push(
     {
-      $limit: +page * +limit
+      $limit: +page * +limit,
     },
     {
-      $skip: +page * +limit - +limit
-
+      $skip: +page * +limit - +limit,
     }
-  )
+  );
+}
 
   const orders = await Order.aggregate(pipeline);
 
   if (!orders) {
-    throw new ApiError(500, "Problem while fetching orders")
+    throw new ApiError(500, "Problem while fetching orders");
   }
 
   if (!orders.length) {
@@ -698,13 +687,91 @@ const getAllOrders = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(
-      200,
-      orders,
-      "Orders fetched successfully"
-    ))
-})
+    .json(new ApiResponse(200, orders, "Orders fetched successfully"));
+});
 
+const getOrderById = asyncHandler(async (req, res) => {
+  const { orderid } = req.params;
+
+  const order = await Order.findById(orderid);
+
+  if (!order) {
+    throw new ApiError(404, "Order not exist.");
+  }
+
+  const orderDetails = await Order.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(`${orderid}`),
+      },
+    },
+    {
+      $lookup: {
+        from: "addresses",
+        localField: "address",
+        foreignField: "_id",
+        as: "address",
+        pipeline: [
+          {
+            $project: {
+              mobileNumber: 1,
+              pinCode: 1,
+              state: 1,
+              city: 1,
+              address: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+              email: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        address: { $first: "$address" },
+        user: { $first: "$user" },
+      },
+    },
+    {
+      $project: {
+        user: 1,
+        address: 1,
+        orderStatus: 1,
+        productsDetails: 1,
+        total: 1,
+        createdAt: 1,
+      },
+    },
+  ]);
+
+  if (!orderDetails) {
+    throw new ApiError(500, "Problem while fetching order");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        orderDetails[0],
+        "Order fetched successfully"
+      )
+    );
+});
 
 export {
   verifyIsAdmin,
@@ -731,5 +798,6 @@ export {
   deleteCategory,
 
   //Order exports
-  getAllOrders
+  getAllOrders,
+  getOrderById
 };
