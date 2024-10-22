@@ -193,7 +193,7 @@ function Cart() {
                 <p className="text-lg font-bold">
                 ₹{(item.product.price * item.quantity)}
                 </p>
-                <button onClick={() => HandleRemoveFromCart(item._id)} className="h-full w-[75%] relative bottom-24 lg:bottom-0 lg:flex lg:justify-end"><IoCloseSharp className="transition-all ease-in-out duration-500 text-2xl hover:text-3xl" /></button>    
+                <button className="h-full w-[75%] relative bottom-24 lg:bottom-0 lg:flex lg:justify-end cursor-default"><span onClick={() => HandleRemoveFromCart(item._id)} className="cursor-pointer"><IoCloseSharp className="transition-all ease-in-out duration-500 text-2xl hover:text-3xl" /></span></button>    
                 
               </div>
             </div>
