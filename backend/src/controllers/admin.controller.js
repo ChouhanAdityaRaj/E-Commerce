@@ -7,15 +7,16 @@ import { uploadOnCloudinary } from "../utils/uploadOnCloudinary.js";
 import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
 import { Review } from "../models/review.model.js";
 import { Category } from "../models/category.model.js";
+import { Order } from "../models/order.model.js";
 
 const verifyIsAdmin = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user?._id);
 
-  if(!user){
+  if (!user) {
     throw new ApiError(404, "User not exist");
   }
 
-  if(!user.isAdmin){
+  if (!user.isAdmin) {
     throw new ApiError(403, "Access Denied");
   }
 
@@ -23,7 +24,7 @@ const verifyIsAdmin = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(
       200,
-      {isAdmin: true},
+      { isAdmin: true },
       "Access Granted"
     ))
 });
@@ -38,13 +39,13 @@ const getAllUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "You can only sort by fullName or createdAt");
   }
 
-  if(search){
-  pipeline.push({
-    $match: {
+  if (search) {
+    pipeline.push({
+      $match: {
         fullName: new RegExp(`${search.split(" ").join("|")}`, 'gi')
-    }
-  })
-}
+      }
+    })
+  }
 
   if (sortBy === "fullName") {
     pipeline.push({
@@ -545,23 +546,23 @@ const updateCategoryImage = asyncHandler(async (req, res) => {
 
   const category = await Category.findById(categoryid);
 
-  if(!category){
+  if (!category) {
     throw new ApiError(404, "Category not exist");
   }
 
-  if(!categoryImageLocalPath){
+  if (!categoryImageLocalPath) {
     throw new ApiError(400, "Image is required");
   }
 
   const deletedImage = await deleteFromCloudinary(category.image);
 
-  if(!deletedImage){
+  if (!deletedImage) {
     throw new ApiError(500, "Problem while deleteing old category image");
   }
 
   const newCategoryImage = await uploadOnCloudinary(categoryImageLocalPath);
 
-  if(!newCategoryImage){
+  if (!newCategoryImage) {
     throw new ApiError(500, "Problem while uploading new category image");
   }
 
@@ -571,10 +572,10 @@ const updateCategoryImage = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(
-        200,
-        updatedCategory,
-        "Category Updated Successfully"
-      )
+      200,
+      updatedCategory,
+      "Category Updated Successfully"
+    )
     )
 
 
@@ -636,6 +637,75 @@ const deleteCategory = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Category deleated successfully"));
 });
 
+
+// Admin order Controllers
+
+const getAllOrders = asyncHandler(async (req, res) => {
+  const { page = 1, limit = 10, sortBy, sortType = 1 } = req.query;
+
+  const pipeline = [
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+            }
+          }
+        ]
+      }
+    },
+    {
+      $addFields: {
+        user: { $first: "$user" }
+      },
+    },
+  ];
+
+  if (sortBy === "createdAt") {
+    pipeline.push(
+      {
+        $sort: {
+          createdAt: +sortType
+        }
+      }
+    )
+  }
+
+  pipeline.push(
+    {
+      $limit: +page * +limit
+    },
+    {
+      $skip: +page * +limit - +limit
+
+    }
+  )
+
+  const orders = await Order.aggregate(pipeline);
+
+  if (!orders) {
+    throw new ApiError(500, "Problem while fetching orders")
+  }
+
+  if (!orders.length) {
+    throw new ApiError(404, `There is no orders on this page`);
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      orders,
+      "Orders fetched successfully"
+    ))
+})
+
+
 export {
   verifyIsAdmin,
 
@@ -659,4 +729,7 @@ export {
   updateCategor,
   updateCategoryImage,
   deleteCategory,
+
+  //Order exports
+  getAllOrders
 };
