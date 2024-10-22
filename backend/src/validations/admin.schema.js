@@ -113,4 +113,11 @@ const updateCategorySchema = z.object({
     .optional(),
 })
 
-export { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, addDiscountSchema, createCategorySchema, updateCategorySchema };
+const updateOrderStatusSchema = z.object({
+  status: z.enum(["pending", "on the way", "delivered", "cancelled"], {message: 'Invalid Order Status'}),
+})
+
+//Admin Order Schemes
+
+
+export { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, addDiscountSchema, createCategorySchema, updateCategorySchema, updateOrderStatusSchema };

@@ -773,6 +773,31 @@ const getOrderById = asyncHandler(async (req, res) => {
     );
 });
 
+const updateOrderStatus = asyncHandler(async (req, res) => {
+  const { orderid } = req.params;
+  const { status } = req.body;
+
+  const updatedOrder = await Order.findByIdAndUpdate(
+    orderid,
+    {
+      orderStatus: status
+    },
+    { new: true }
+  );
+
+  if (!updatedOrder) {
+    throw new ApiError(404, "Order not exist.");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      updatedOrder,
+      "Order status updated successfully"
+    ))
+})
+
 export {
   verifyIsAdmin,
 
@@ -799,5 +824,6 @@ export {
 
   //Order exports
   getAllOrders,
-  getOrderById
+  getOrderById,
+  updateOrderStatus
 };
