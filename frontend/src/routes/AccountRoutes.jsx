@@ -1,5 +1,5 @@
 import { BaseLayout, AuthLayout } from "../layouts";
-import { Profile, Address } from "../pages";
+import { Profile, Address, Orders, OrderDetail } from "../pages";
 
 const AccountRoutes = [
   {
@@ -21,6 +21,27 @@ const AccountRoutes = [
             <Address />
           </AuthLayout>
         ),
+      },
+      {
+        path: "orders",
+        children: [
+          {
+            path: "",
+            element: (
+              <AuthLayout>
+                <Orders />
+              </AuthLayout>
+            ),
+          },
+          {
+            path: ":orderid",
+            element: (
+              <AuthLayout>
+                <OrderDetail />
+              </AuthLayout>
+            ),
+          },
+        ]
       },
     ],
   },

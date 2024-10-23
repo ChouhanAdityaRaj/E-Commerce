@@ -104,6 +104,25 @@ class User{
         }
     }
 
+    //Orders
+    getUserOrdersOverview(){
+        return {
+            urlPath: `${config.backendUrl}/order/u`,
+        }
+    }
+
+    getOrderById(orderid){
+        return {
+            urlPath: `${config.backendUrl}/order/${orderid}`,
+        }
+    }
+
+    cancelOrder(orderid){
+        return {
+            urlPath: `${config.backendUrl}/order/${orderid}`,
+            method: "delete",
+        }
+    }
 };
 
 const user = new User();

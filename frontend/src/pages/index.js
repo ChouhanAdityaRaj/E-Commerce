@@ -6,6 +6,8 @@ import ProductList from "./productPages/ProductList";
 import ProductDetail from "./productPages/ProductDetail";
 import Profile from "./AccountPages/Profile";
 import Address from "./AccountPages/Address";
+import Orders from "./AccountPages/Orders";
+import OrderDetail from "./AccountPages/OrderDetail";
 import Cart from "./Cart";
 import ProductReviews from "./ProductReviews";
 import CollectionProductList from "./collection/CollectionProductList";
@@ -27,6 +29,8 @@ export {
     ProductDetail,
     Profile,
     Address,
+    Orders,
+    OrderDetail,
     Cart,
     ProductReviews,
     Users,
