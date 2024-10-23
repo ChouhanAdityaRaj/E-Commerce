@@ -3,23 +3,33 @@ import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 import topRatedImage from "../assets/top-rated.jpg";
 import mostBuyedImage from "../assets/most-buyed.jpg";
 import newArrivalImage from "../assets/new-arrivals.jpg";
+import { Link } from "react-router-dom"
 
 function CardSlider() {
   const slides = [
     {
       id: "1",
-      title: "New Arivel",
-      image: newArrivalImage
+      title: "New Arivel First",
+      image: newArrivalImage,
+      activeStatus: true,
+      path: "/product?search=&sortBy=date&sortType=-1"
+
     },
     {
       id: "2",
-      title: "Top Rated",
-      image: topRatedImage
+      title: "Top Rated First",
+      image: topRatedImage,
+      activeStatus: true,
+      path: "/product?search=&sortBy=rating&sortType=-1"
+
     },
     {
       id: "3",
-      title: "Most Buyed",
-      image: mostBuyedImage
+      title: "All Products",
+      image: mostBuyedImage,
+      activeStatus: true,
+      path: "/product?search="
+
     },
   ];
 
@@ -70,9 +80,10 @@ function CardSlider() {
               transition: "transform 0.5s ease-in-out",
             }}
           >
-            {slides.map((slide) => (
-              <div
+            {slides.map((slide) => slide.activeStatus && (
+              <Link
                 key={slide.id}
+                to={slide.path}
                 className="flex-shrink-0 w-[33.33%] h-[20vh] sm:h-[50vh] md:h-[26vh] xl:h-[70vh] bg-white text-black rounded-xl"
               >
                 <div className="w-full h-full flex flex-col items-center  p-2">
@@ -85,7 +96,7 @@ function CardSlider() {
                     {slide.title}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

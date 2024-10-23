@@ -34,7 +34,7 @@ function AdminNavbarLayout() {
       name: "Sales",
       path: "sales",
       icon: <BsGraphUp />,
-      activeStatus: true,
+      activeStatus: false,
     },
     {
       name: "Orders",
