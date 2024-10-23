@@ -143,6 +143,49 @@ class AdminService {
         }
     }
 
+    // Order
+    getAllOrders({sortBy, sortType, limit, page}){
+        let url = `${config.backendUrl}/admin/orders`;
+
+        const queryStringArray = [];
+
+        if(sortBy){
+            queryStringArray.push(`sortBy=${sortBy}`);
+        }
+
+        if(sortType){
+            queryStringArray.push(`sortType=${sortType}`)
+        }
+
+        if(limit){
+            queryStringArray.push(`limit=${limit}`)
+        }
+
+        if(page){
+            queryStringArray.push(`page=${page}`)
+        }
+
+        url += `?${queryStringArray.join("&")}`;
+        
+        return {
+            urlPath: url,
+        };
+    }
+
+    getOrderById(orderid){
+        return {
+            urlPath: `${config.backendUrl}/admin/orders/${orderid}`,
+        }
+    }
+
+    updateOrderStatus(orderid, {status}){
+        return {
+            urlPath: `${config.backendUrl}/admin/orders/${orderid}/status`,
+            method: "patch",
+            data: {status}
+        }
+    }
+
 
 }
 

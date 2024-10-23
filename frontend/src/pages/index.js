@@ -18,6 +18,8 @@ import UpdateProduct from "./admin/UpdateProduct";
 import Categories from "./admin/Categories";
 import CreateCategory from "./admin/CreateCategory";
 import UpdateCategory from "./admin/UpdateCategory";
+import OrdersList from "./admin/OrdersList";
+import OrderInfo from "./admin/OrderInfo";
 
 export {
     Login,
@@ -39,5 +41,7 @@ export {
     UpdateProduct,
     Categories,
     CreateCategory,
-    UpdateCategory
+    UpdateCategory,
+    OrdersList,
+    OrderInfo
 }

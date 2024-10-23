@@ -53,7 +53,7 @@ function ProductDetail() {
       });
     }
 
-    if (error.statusCode === 401) {
+    if (error?.statusCode === 401) {
       navigate("/login");
     }
 

@@ -1,33 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { CiLocationOn, CiShoppingCart, CiUser, CiLogout } from "react-icons/ci";
+import { BsPersonGear } from "react-icons/bs";
 import { apiHandler } from "../utils";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/auth";
+import adminService from "../services/admin";
 
 function AccountNavSidebar({ isAccountSidebarOpen, setIsAccountSidebarOpen }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const navigations = [
-    {
-      name: "Profile",
-      icon: <CiUser />,
-      path: "/account/profile",
-    },
-    {
-      name: "Orders",
-      icon: <CiShoppingCart />,
-      path: "/account/orders",
-    },
-    {
-      name: "Addresses",
-      icon: <CiLocationOn />,
-      path: "/account/address",
-    },
-  ];
+  const navigationLinks = [
+      {
+        name: "Profile",
+        icon: <CiUser />,
+        path: "/account/profile",
+      },
+      {
+        name: "Orders",
+        icon: <CiShoppingCart />,
+        path: "/account/orders",
+      },
+      {
+        name: "Addresses",
+        icon: <CiLocationOn />,
+        path: "/account/address",
+      },
+    ];
+
+  const [navigations, setNavigations] = useState(navigationLinks);
+
+  
+  useEffect(() => {
+    (async () => {
+      const [response, error] = await apiHandler(adminService.verifyAdmin());
+
+      if(response){
+        setNavigations([...navigationLinks, {
+          name: "Admin",
+          icon: <BsPersonGear  />,
+          path: "/admin/users",
+        }])
+      }
+    })()
+  }, [])
 
   const handleLogout = async () => {
     const [response, error] = await apiHandler(authService.logout());    

@@ -650,8 +650,24 @@ const getAllOrders = asyncHandler(async (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: "addresses",
+        localField: "address",
+        foreignField: "_id",
+        as: "address",
+        pipeline: [
+          {
+            $project: {
+              state: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
       $addFields: {
         user: { $first: "$user" },
+        address: { $first: "$address" },
       },
     },
   ];
