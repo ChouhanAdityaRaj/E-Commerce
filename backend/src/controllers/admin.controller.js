@@ -859,6 +859,35 @@ const createBanner = asyncHandler(async (req, res) => {
     ));
 })
 
+const deleteBanner = asyncHandler(async (req, res) => {
+  const { bannerid } = req.params;
+
+  const banner = await Banner.findById(bannerid);
+
+  if(!banner){
+    throw new ApiError(404, "Banner not exist");
+  }
+
+  const deletedImage = await deleteFromCloudinary(banner.image);
+
+  if(!deletedImage){
+    throw new ApiError(500, "Problem while deleting banner image");
+  }
+
+  const deletedBanner = await Banner.findByIdAndDelete(bannerid);
+
+  if(!deletedBanner){
+    throw new ApiError(500, "Problem while deleting banner.");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      {},
+      "Banner deleted successfully."
+    ))
+})
 
 export {
   verifyIsAdmin,
@@ -890,5 +919,6 @@ export {
   updateOrderStatus,
 
   //Banner exports
-  createBanner
+  createBanner,
+  deleteBanner
 };
