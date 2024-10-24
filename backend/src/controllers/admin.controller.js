@@ -827,6 +827,14 @@ const createBanner = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Product is required")
   }
 
+  for(const productId of products){
+    const isProduct = await Product.findById(productId);
+
+    if(!isProduct){
+      throw new ApiError(400, "Please give valid products");
+    }
+  }
+
   const bannerImageLocalPath = req.file ? req.file?.path : undefined;
 
   if (!bannerImageLocalPath) {
@@ -843,7 +851,7 @@ const createBanner = asyncHandler(async (req, res) => {
     title,
     isActive,
     image: bannerImage?.url,
-    products
+    products: [...new Set([...products])]
   })
 
   if(!banner){
@@ -889,6 +897,50 @@ const deleteBanner = asyncHandler(async (req, res) => {
     ))
 })
 
+const addProductsToBanner = asyncHandler(async (req, res) => {
+  const { bannerid } = req.params;
+  const { products } = req.body;
+
+  const banner = await Banner.findById(bannerid);
+
+  if(!banner){
+    throw new ApiError(404, "Banner not exist");
+  }
+
+  if(!products?.length){
+    throw new ApiError(400, "Product is required");
+  }
+
+  const productsList = [];
+
+  for(const productId of products){
+    const isProduct = await Product.findById(productId);
+
+    if(!isProduct){
+      throw new ApiError(400, "Please give valid products");
+    }
+  }
+
+  const previousProducts = banner.products.map((product) => product.toString());
+  
+  banner.products = [...new Set([...previousProducts, ...products])];
+
+  const updatedBanner = await banner.save();
+
+  if(!updatedBanner){
+    throw new ApiError(500, "Pronblem whiel updating banner");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      updatedBanner,
+      "Product added to banner successfully"
+    ))
+
+})
+
 export {
   verifyIsAdmin,
 
@@ -920,5 +972,6 @@ export {
 
   //Banner exports
   createBanner,
-  deleteBanner
+  deleteBanner,
+  addProductsToBanner
 };
