@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import  AuthRoutes from "./AuthRoutes";
 import HomeRoutes from "./HomeRoutes";
+import AboutRoutes from "./AboutRoutes";
 import CollectionsRoutes from "./CollectionsRoutes";
 import ProductRoutes from "./ProductRoutes";
 import AccountRoutes from "./AccountRoutes";
@@ -13,11 +14,12 @@ const router = createBrowserRouter([
     ...HomeRoutes,
     ...AuthRoutes,
     ...CollectionsRoutes,
+    ...AboutRoutes,
     ...ProductRoutes,
     ...AccountRoutes,
     ...CartRoutes,
     ...ReviewRoutes,
-    ...AdminRoutes
+    ...AdminRoutes,
 ]);
 
 export default router;
