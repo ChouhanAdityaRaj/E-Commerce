@@ -3,7 +3,6 @@ import { Link, NavLink } from 'react-router-dom';
 import { SlMagnifier, SlBasket, SlUser } from "react-icons/sl"
 import { useSelector } from "react-redux";
 import { SearchBar, AccountNavSidebar } from "../components";
-import { FaLeaf } from 'react-icons/fa';
 
 function Header() {
 
@@ -14,11 +13,16 @@ function Header() {
   const [isAccountSidebarOpen, setIsAccountSidebarOpen] = useState(false);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+    const activeHeaderOn = ["/", "/collections"]; 
+    if(!activeHeaderOn.includes(window.location.pathname)){
+      setNavBackground(true);
+    } else {
+      window.addEventListener('scroll', handleScroll);
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [window.location.href])
   
   const handleScroll = () => {
     if (window.scrollY > 50) {
@@ -27,6 +31,8 @@ function Header() {
       setNavBackground(false);
     }
   };
+
+  
 
   
   const toggleAccountNavSidebar = () => {

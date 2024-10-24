@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Collection, Slider, CardSlider } from "../components";
 import image from "../assets/image.jpg";
-import { SlMagnifier } from "react-icons/sl";
 
 function Home() {
   return (
