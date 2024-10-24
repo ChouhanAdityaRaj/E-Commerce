@@ -941,6 +941,83 @@ const addProductsToBanner = asyncHandler(async (req, res) => {
 
 })
 
+const updateBannerDetails = asyncHandler(async (req, res) => {
+  const { bannerid } = req.params;
+  const { title, isActive } = req.body;
+
+  if(!(title || isActive === false || isActive === true)){
+    throw new ApiError(400, "Atleast one field is required")
+  }
+
+  const updateObject = {};
+
+  for (const key of Object.keys(req.body)) {
+    updateObject[key] = req.body[key];
+  }
+
+  const banner = await Banner.findByIdAndUpdate(
+    bannerid,
+    updateObject,
+    {new: true}
+  );
+
+  if(!banner){
+    throw new ApiError(404, "Banner not exist");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      banner,
+      "Banner details updated successfully."
+    ));
+})
+
+const updateBannerImage = asyncHandler(async (req, res) => {
+  const { bannerid } = req.params;
+
+  const banner = await Banner.findById(bannerid);
+
+  if(!banner){
+    throw new ApiError(404, "Banner not exist");
+  }
+
+  const imageLocalPath = req.file ? req.file.path : undefined;
+  
+  if(!imageLocalPath){
+    throw new ApiError(400, "Image is required")
+  }
+
+  const uplodedImage = await uploadOnCloudinary(imageLocalPath);
+
+  if(!uplodedImage){
+    throw new ApiError(500, "Problem whiel uploading image");
+  }
+
+  const deletedImage = await deleteFromCloudinary(banner.image);
+
+  if(!deletedImage){
+    throw new ApiError(500, "Problem while deleting banner image");
+  }
+
+  banner.image = uplodedImage.url;
+
+  const updatedBanner = await banner.save()
+
+  if(!updatedBanner){
+    throw new ApiError(500, "Problem whiel updating image");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      updatedBanner,
+      "Banner Image updated successfully"
+    ))
+})
+
 export {
   verifyIsAdmin,
 
@@ -973,5 +1050,7 @@ export {
   //Banner exports
   createBanner,
   deleteBanner,
-  addProductsToBanner
+  addProductsToBanner,
+  updateBannerDetails,
+  updateBannerImage
 };

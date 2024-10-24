@@ -117,7 +117,16 @@ const updateOrderStatusSchema = z.object({
   status: z.enum(["pending", "on the way", "delivered", "cancelled"], {message: 'Invalid Order Status'}),
 })
 
-//Admin Order Schemes
+//Admin Banner Schemes
+const updateBannerDetailsSchema = z.object({
+  title: z
+    .string({invalid_type_error: "Title must be a String"})
+    .trim()
+    .optional(),
 
+  isActive: z
+    .boolean({invalid_type_error: "isActive must be a Boolean"})
+    .optional(),
+})
 
-export { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, addDiscountSchema, createCategorySchema, updateCategorySchema, updateOrderStatusSchema };
+export { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, addDiscountSchema, createCategorySchema, updateCategorySchema, updateOrderStatusSchema, updateBannerDetailsSchema };
