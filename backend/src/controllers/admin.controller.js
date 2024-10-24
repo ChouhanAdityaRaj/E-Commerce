@@ -7,6 +7,7 @@ import { uploadOnCloudinary } from "../utils/uploadOnCloudinary.js";
 import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
 import { Review } from "../models/review.model.js";
 import { Category } from "../models/category.model.js";
+import { Banner } from "../models/banner.model.js";
 import { Order } from "../models/order.model.js";
 import mongoose from "mongoose";
 
@@ -814,6 +815,51 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     ))
 })
 
+//Admin Banner Controller
+const createBanner = asyncHandler(async (req, res) => {
+  const {title, isActive, products} =  req.body;
+
+  if(!title?.trim()){
+    throw new ApiError(400, "Title is required")
+  }
+
+  if(!products?.length){
+    throw new ApiError(400, "Product is required")
+  }
+
+  const bannerImageLocalPath = req.file ? req.file?.path : undefined;
+
+  if (!bannerImageLocalPath) {
+    throw new ApiError(400, "Banner image is required");
+  }
+
+  const bannerImage = await uploadOnCloudinary(bannerImageLocalPath);
+
+  if (!bannerImage) {
+    throw new ApiError(500, "Problem while uploading product image");
+  }
+
+  const banner = await Banner.create({
+    title,
+    isActive,
+    image: bannerImage?.url,
+    products
+  })
+
+  if(!banner){
+    throw new ApiError(500, "Pronblem whiel creating banner");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      banner,
+      "Banner created successfully"
+    ));
+})
+
+
 export {
   verifyIsAdmin,
 
@@ -841,5 +887,8 @@ export {
   //Order exports
   getAllOrders,
   getOrderById,
-  updateOrderStatus
+  updateOrderStatus,
+
+  //Banner exports
+  createBanner
 };

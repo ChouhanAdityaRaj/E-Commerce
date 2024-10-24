@@ -5,6 +5,10 @@ const asyncHandler = (requestHadler) => {
     Promise
         .resolve(requestHadler(req, res, next))
         .catch((err) => {
+          if(req.file){
+            fs.unlinkSync(req.file.path)
+          }
+
           if(req.files){
             for (const fieldName in req.files) {
               req.files[fieldName].forEach(img => {
