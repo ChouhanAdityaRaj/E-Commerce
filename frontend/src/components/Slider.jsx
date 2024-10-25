@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import image from "../assets/image.jpg";
 import { useApi } from "../hooks";
 import productService from "../services/product";
 import { Loader, ErrorMessage} from "../components"
@@ -38,7 +37,7 @@ if(response){
           className="w-full h-full flex transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >
-          {response?.data?.map((banner, index) => (
+          {response?.data?.map((banner, index) => banner.isActive ? (
             <Link to={`/b/${banner._id}`} key={banner._id} className="flex-shrink-0 w-full h-[30vh] sm:h-[35vh] xl:h-[90vh] md:h-[40vh] relative">
               <img
                 src={banner.image}
@@ -49,7 +48,7 @@ if(response){
                 {banner.title}
               </div>
             </Link>
-          ))}
+          ) : null )}
         </div>
 
         <button

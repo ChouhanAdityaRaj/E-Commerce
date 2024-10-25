@@ -51,6 +51,7 @@ const getBannerDetails = asyncHandler(async (req, res) => {
                         else: { $divide: ["$sumOfReviewStar", "$totalReview"] },
                     },
                 },
+                createdAt: 1
             }
         }
     ]

@@ -2,6 +2,7 @@ import Login from "./authPages/Login";
 import Signup from "./authPages/Signup";
 import Home from "./Home";
 import Collections from "./collection/Collections"
+import BannerDetails from "./BannerDetails";
 import About from "./About";
 import ProductList from "./productPages/ProductList";
 import ProductDetail from "./productPages/ProductDetail";
@@ -27,6 +28,7 @@ export {
     Signup,
     Home,
     Collections,
+    BannerDetails,
     About,
     CollectionProductList,
     ProductList,
