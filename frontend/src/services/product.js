@@ -149,6 +149,43 @@ class Product{
             urlPath: url,
         };
     }
+
+
+    // Banner
+
+    getAllBanners(){
+        return {
+            urlPath: `${config.backendUrl}/banner`,
+        }
+    }
+
+    getBannerDetails(bannerid, {sortBy, sortType, limit, page}){
+        let url = `${config.backendUrl}/banner/${bannerid}`;
+
+        const queryStringArray = [];
+
+        if(sortBy){
+            queryStringArray.push(`sortBy=${sortBy}`);
+        }
+
+        if(sortType){
+            queryStringArray.push(`sortType=${sortType}`)
+        }
+
+        if(limit){
+            queryStringArray.push(`limit=${limit}`)
+        }
+
+        if(page){
+            queryStringArray.push(`page=${page}`)
+        }
+
+        url += `?${queryStringArray.join("&")}`;
+        
+        return {
+            urlPath: url,
+        };
+    }
 }
 
 const product = new Product();
