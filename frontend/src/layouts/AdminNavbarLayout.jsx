@@ -4,6 +4,7 @@ import { LuUsers } from "react-icons/lu";
 import { FaTshirt } from "react-icons/fa";
 import { BiSolidCategoryAlt } from "react-icons/bi";
 import { BsGraphUp, BsCart3 } from "react-icons/bs";
+import { IoMdHome } from "react-icons/io";
 import { useApi } from "../hooks";
 import adminService from "../services/admin";
 import { ErrorMessage, Loader } from "../components";
@@ -13,6 +14,12 @@ function AdminNavbarLayout() {
   const [response, loading, error] = useApi(adminService.verifyAdmin());
 
   const adminNavigation = [
+    {
+      name: "Home",
+      path: "/",
+      icon: <IoMdHome />,
+      activeStatus: true,
+    },
     {
       name: "Users",
       path: "users",

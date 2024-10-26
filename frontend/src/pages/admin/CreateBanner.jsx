@@ -21,17 +21,24 @@ function CreateBanner() {
     const onSubmit = async ({ title, image, isActive, products }) => {
         setIsLoading(true);
 
+        if(!image[0]){
+            setErrorAlertMessage("Image is required")
+            setIsLoading(false)
+            return 
+        }
+
         const formData = new FormData();
 
         formData.append("title", title)
         formData.append("isActive", isActive)
         formData.append("bannerImage", image[0])
         
-        for(const id of products){
-            formData.append("products", id)
-        }
+        products.forEach((id, i) => {
+            formData.append(`products[${i}]`, id)
+        })
 
         const [response, error] = await apiHandler(adminService.createBanner(formData));
+        
 
         if (response) {
             navigate("/admin/banner")
