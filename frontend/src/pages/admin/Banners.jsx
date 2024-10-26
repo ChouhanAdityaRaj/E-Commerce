@@ -111,11 +111,15 @@ function Banners() {
                     className="bg-white p-4 rounded-lg shadow-lg flex flex-col justify-between"
                   >
                     {/* Banner Image */}
+                    <Link
+                      to={`/b/${banner._id}`}
+                    >
                     <img
                       src={banner.image}
                       alt={banner.title}
                       className="w-full h-[40vh] object-contain rounded-md mb-4"
-                    />
+                      />
+                      </Link>
     
                     {/* Banner Info */}
                     <div>

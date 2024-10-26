@@ -1,5 +1,5 @@
 import { AuthLayout, AdminNavbarLayout } from "../layouts";
-import { Users, Products, CreateProduct, UpdateProduct, Categories, CreateCategory, UpdateCategory, OrdersList, OrderInfo, Banners } from "../pages";
+import { Users, Products, CreateProduct, UpdateProduct, Categories, CreateCategory, UpdateCategory, OrdersList, OrderInfo, Banners, CreateBanner } from "../pages";
 
 const AdminRoutes = [
   {
@@ -105,10 +105,10 @@ const AdminRoutes = [
             )
           },
           {
-            path: ":orderid",
+            path: "create-banner",
             element: (
               <AuthLayout>
-                <OrderInfo />
+                <CreateBanner />
               </AuthLayout>
             )
           }

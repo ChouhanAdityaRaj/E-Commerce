@@ -59,6 +59,7 @@ const searchProducts = asyncHandler(async (req, res) => {
           },
         },
         createdAt: 1,
+        discount: 1
       },
     },
 );
@@ -167,6 +168,7 @@ const getProductById = asyncHandler(async (req, res) => {
         category: 1,
         stock: 1,
         createdAt: 1,
+        discount: 1,
         rating: {
           $cond: {
             if: { $eq: ["$totalReview", 0] },
@@ -194,6 +196,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
         productName: 1,
         productImage: 1,
         description: 1,
+        discount: 1,
         price: 1,
         rating: {
           $cond: {
