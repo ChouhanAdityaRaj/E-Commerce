@@ -12,6 +12,7 @@ const getAllBanners = asyncHandler(async (req, res) => {
                 title: 1,
                 image: 1,
                 isActive: 1,
+                createdAt: 1
             }
         }
     ])

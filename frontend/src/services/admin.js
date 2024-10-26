@@ -187,7 +187,47 @@ class AdminService {
     }
 
 
-}
+    //Banner
+    createBanner(data){
+        return {
+            urlPath: `${config.backendUrl}/admin/banner`,
+            method: "post",
+            data
+        }
+    }
+
+    deleteBanner(bannerid){
+        return {
+            urlPath: `${config.backendUrl}/admin/banner/${bannerid}`,
+            method: "delete",
+        }
+    }
+
+    addProductsToBanner(bannerid, {products = []}){
+        return {
+            urlPath: `${config.backendUrl}/admin/banner/${bannerid}/products`,
+            method: "patch",
+            data: products
+        }
+    }
+    
+    updateBannerDetails(bannerid, data){
+        return {
+            urlPath: `${config.backendUrl}/admin/banner/${bannerid}/details`,
+            method: "patch",
+            data
+        }
+    }
+    
+    updateBannerImage(bannerid, bannerImage){
+        return {
+            urlPath: `${config.backendUrl}/admin/banner/${bannerid}/image`,
+            method: "patch",
+            data: bannerImage
+        }
+    }
+    
+};
 
 const adminService = new AdminService();
 

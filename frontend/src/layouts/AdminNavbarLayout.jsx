@@ -7,6 +7,7 @@ import { BsGraphUp, BsCart3 } from "react-icons/bs";
 import { useApi } from "../hooks";
 import adminService from "../services/admin";
 import { ErrorMessage, Loader } from "../components";
+import { IoImagesOutline } from "react-icons/io5";
 
 function AdminNavbarLayout() {
   const [response, loading, error] = useApi(adminService.verifyAdmin());
@@ -28,6 +29,12 @@ function AdminNavbarLayout() {
       name: "Categories",
       path: "categories",
       icon: <BiSolidCategoryAlt />,
+      activeStatus: true,
+    },
+    {
+      name: "Banners",
+      path: "banner",
+      icon: <IoImagesOutline  />,
       activeStatus: true,
     },
     {

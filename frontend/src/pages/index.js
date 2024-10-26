@@ -22,6 +22,7 @@ import CreateCategory from "./admin/CreateCategory";
 import UpdateCategory from "./admin/UpdateCategory";
 import OrdersList from "./admin/OrdersList";
 import OrderInfo from "./admin/OrderInfo";
+import Banners from "./admin/Banners";
 
 export {
     Login,
@@ -47,5 +48,6 @@ export {
     CreateCategory,
     UpdateCategory,
     OrdersList,
-    OrderInfo
+    OrderInfo,
+    Banners
 }
