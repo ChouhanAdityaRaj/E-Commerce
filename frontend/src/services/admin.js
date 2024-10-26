@@ -203,11 +203,11 @@ class AdminService {
         }
     }
 
-    addProductsToBanner(bannerid, {products = []}){
+    addProductsToBanner(bannerid, products){
         return {
             urlPath: `${config.backendUrl}/admin/banner/${bannerid}/products`,
             method: "patch",
-            data: products
+            data: products,
         }
     }
     
