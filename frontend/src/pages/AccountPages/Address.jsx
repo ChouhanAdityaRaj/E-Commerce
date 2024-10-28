@@ -10,7 +10,7 @@ function Address() {
     register: updateAddressRegister,
     handleSubmit: updateAddressHandleSubmit,
   } = useForm();
-  const { register: addAddressRegister, handleSubmit: addAddresHandleSubmit } =
+  const { register: addAddressRegister, handleSubmit: addAddresHandleSubmit, reset: addAddressReset } =
     useForm();
 
   const [addresses, setAddresses] = useState([]);
@@ -106,6 +106,7 @@ function Address() {
       setResponseMessage(response.message);
       setIsAddAddressFromOpen(false);
       setReload(!reload);
+      addAddressReset();
     }
 
     if (error) {
