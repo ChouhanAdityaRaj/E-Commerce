@@ -269,6 +269,22 @@ const getUserCartInfo = asyncHandler(async (req, res) => {
                 user: new mongoose.Types.ObjectId(`${req.user._id}`)
             }
         },
+        {
+            $lookup: {
+                from: "users",
+                localField: "user",
+                foreignField: "_id",
+                as: "user",
+                pipeline: [
+                    {
+                        $project: {
+                            fullName: 1,
+                            email: 1
+                        }
+                    }
+                ]
+            }
+        },
         { 
             $unwind: "$items" 
         }, 

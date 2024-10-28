@@ -9,6 +9,7 @@ import CartRoutes  from "./CartRoutes";
 import ReviewRoutes from "./ReviewRoutes";
 import AdminRoutes from "./AdminRoutes";
 import BannerRoutes from "./BannerRoutes";
+import PlaceOrderRoutes from "./PlaceOrderRoutes";
 
 
 const router = createBrowserRouter([
@@ -21,7 +22,8 @@ const router = createBrowserRouter([
     ...CartRoutes,
     ...ReviewRoutes,
     ...AdminRoutes,
-    ...BannerRoutes
+    ...BannerRoutes,
+    ...PlaceOrderRoutes
 ]);
 
 export default router;

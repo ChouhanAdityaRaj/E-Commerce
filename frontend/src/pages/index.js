@@ -25,6 +25,7 @@ import OrderInfo from "./admin/OrderInfo";
 import Banners from "./admin/Banners";
 import CreateBanner from "./admin/CreateBanner";
 import UpdateBanner from "./admin/UpdateBAnner";
+import AddressSelect from "./AddressSelect";
 
 export {
     Login,
@@ -53,5 +54,6 @@ export {
     OrderInfo,
     Banners,
     CreateBanner,
-    UpdateBanner
+    UpdateBanner,
+    AddressSelect,
 }

@@ -28,6 +28,7 @@ import categoryRouter from "./routes/category.routes.js";
 import productRouter from "./routes/product.routes.js";
 import orderRouter from "./routes/order.routes.js";
 import bannerRouter from "./routes/banner.routes.js";
+import paymentRouter from "./routes/payment.routes.js";
 
 
 // Router Declaration
@@ -40,6 +41,7 @@ app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/banner", bannerRouter);
+app.use("/api/v1/payment", paymentRouter);
 
 
 app.use(ErrorHandler);

@@ -223,7 +223,7 @@ function Cart() {
               Shipping: ₹{cart.shippingCharge}
             </p>
           <div className="w-[100%] lg:w-[80%]  mt-6 lg:mx-5 flex lg:justify-end items-center">
-            <button className=" transition-colors ease-in-out duration-500 mx-5 border-2 border-gray-300 bg-black text-white font-bold px-7 py-3 rounded-full hover:text-black hover:bg-white">Buy Now</button>
+            <Link to={"/place-order/select-address"} className=" transition-colors ease-in-out duration-500 mx-5 border-2 border-gray-300 bg-black text-white font-bold px-7 py-3 rounded-full hover:text-black hover:bg-white">Buy Now</Link>
             <p className="text-2xl font-bold">
               Total:{" "}
               <span >₹{cart.totalAmount}</span>
