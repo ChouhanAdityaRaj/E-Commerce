@@ -55,8 +55,6 @@ const createOrder = asyncHandler(async (req, res) => {
         receipt: `receipt_${Date.now()}`,
     }
     
-    console.log(options);
-    
     const order = await instance.orders.create(options);
 
 
