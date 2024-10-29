@@ -30,6 +30,7 @@ class AuthServie {
         return {
             urlPath: `${config.backendUrl}/user/refresh-token`,
             method: "post",
+            data: {}
         };
     }
 }
