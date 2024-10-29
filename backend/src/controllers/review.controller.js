@@ -370,10 +370,6 @@ const getProductReviews = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Problem while fetching product reviews")
     }
 
-    if(!reviews.length){
-        throw new ApiError(404, `There is no page ${+page}`);
-    }
-
     return res
         .status(200)
         .json(new ApiResponse(

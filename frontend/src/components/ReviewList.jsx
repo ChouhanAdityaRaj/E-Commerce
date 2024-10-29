@@ -176,11 +176,13 @@ function ReviewList({ productid, limit, page, sortBy, sortType, isFilterRequired
           </h1>
 
           {/* Rating Summary Section */}       
-          <div className="flex flex-col md:flex-row items-center justify-center xl:mt-7 lg:mt-16">
+          {reviews.length ? (
+            <>
+            <div className="flex flex-col md:flex-row items-center justify-center xl:mt-7 lg:mt-16">
             <div className="flex flex-col items-center w-full mt-10 md:mt-0">
               <div className="flex items-center space-x-4">
                 <span className="text-3xl lg:text-6xl xl:text-5xl font-bold">
-                  {product.rating.toFixed(1)}
+                  {product?.rating?.toFixed(1)}
                 </span>
                 <div className="flex">
                   {product.rating ? (
@@ -320,6 +322,8 @@ function ReviewList({ productid, limit, page, sortBy, sortType, isFilterRequired
               </div>
             ))}
           </div>
+          </>
+          ) : null}
 
           {/* Review Button */}
           <div className="mt-8 flex justify-center flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">

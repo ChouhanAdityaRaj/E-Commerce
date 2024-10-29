@@ -87,7 +87,7 @@ function ProductDetail() {
     );
 
     return (
-      <div className="container mx-auto pt-8 px-4">
+      <div className="container mx-auto pt-16 px-4">
         {/* Alert Message */}
         {alert && (
           <MessageAlert
@@ -243,7 +243,8 @@ function ProductDetail() {
 
 
         {/* Product Reviews */}
-        {product.rating && (<ReviewList productid={product._id} limit={5} page={1} moreReviewButton={true}/>)}
+        {/* {product.rating && (<ReviewList productid={product._id} limit={5} page={1} moreReviewButton={true}/>)} */}
+        <ReviewList productid={product._id} limit={5} page={1} moreReviewButton={true}/>
         
       </div>
     );
