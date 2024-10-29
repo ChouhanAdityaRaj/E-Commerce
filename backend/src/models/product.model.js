@@ -87,4 +87,9 @@ productSchema.methods.removeDiscount = async function(){
   };
 };
 
+productSchema.pre('save', function (next) {
+  this.price = Math.round(this.price);
+  next();
+});
+
 export const Product = mongoose.model("Product", productSchema);

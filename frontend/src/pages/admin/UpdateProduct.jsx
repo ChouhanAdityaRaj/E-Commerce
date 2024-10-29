@@ -5,9 +5,11 @@ import productService from "../../services/product";
 import { ErrorMessage, MessageAlert, Loader } from "../../components";
 import { apiHandler } from "../../utils";
 import adminService from "../../services/admin";
+import { useNavigate } from "react-router-dom";
 
 function UpdateProduct() {
   const { productid } = useParams();
+  const navigate = useNavigate();
 
   const {
     register: productDetailsRegister,
@@ -35,6 +37,11 @@ function UpdateProduct() {
     reset: productStockReset,
   } = useForm();
 
+  const {
+    register: productDiscountRegister,
+    handleSubmit: productDiscountHandleSubmit,
+  } = useForm();
+
   const [product, setProduct] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -54,7 +61,7 @@ function UpdateProduct() {
         productService.getProductById(productid)
       );
 
-      if (response) {
+      if (response) {;
         setProduct(response.data);
         setStock(response.data.stock);
       }
@@ -220,6 +227,50 @@ function UpdateProduct() {
     setLoading(false);
   };
 
+  const handleProductDiscount = async({discount}) => {
+    setLoading(true);
+
+    const [response, error] = await apiHandler(
+      adminService.updateProductsDiscount(product?._id, {discount: +discount})
+    );
+
+    if (response) {
+      setResponseAlertMessage(response.message);
+      setTimeout(() => {
+        navigate(`/admin/products`)
+      }, 1200)
+    }
+
+    if (error) {
+      setErrorAlertMessage(error.message);
+    }
+
+    setLoading(false);
+  }
+
+  const handleRemoveProductDiscount = async() => {
+    setLoading(true);
+
+    const [response, error] = await apiHandler(
+      adminService.removeProductsDiscount(product?._id)
+    );
+
+    
+
+    if (response) {
+      setResponseAlertMessage(response.message);
+      setTimeout(() => {
+        navigate(`/admin/products`)
+      }, 1200)
+    }
+
+    if (error) {
+      setErrorAlertMessage(error.message);
+    }
+
+    setLoading(false);
+  }
+
   if (error) {
     return <ErrorMessage message={error.message} />;
   }
@@ -275,8 +326,8 @@ function UpdateProduct() {
               <label className="block text-sm">Price</label>
               <input
                 type="number"
-                defaultValue={product?.price}
-                {...productDetailsRegister("price", { min: 1 })}
+                defaultValue={Math.round(product?.price)}
+                {...productDetailsRegister("price")}
                 className="w-full p-2 border rounded"
               />
             </div>
@@ -454,6 +505,39 @@ function UpdateProduct() {
             className="bg-red-400 hover:bg-red-500 text-white py-2 px-4 rounded"
           >
             Save Stock
+          </button>
+        </form>
+
+        {/* Form 6: Update Discount */}
+        <form
+          onSubmit={productDiscountHandleSubmit(handleProductDiscount)}
+          className="space-y-6"
+        >
+            <h2 className="text-xl font-semibold">
+              Update Product Discount
+            </h2>
+            <div>
+              <label className="block text-sm">Product Discount (%)</label>
+              <input
+                type="number"
+                defaultValue={product.discount}
+                {...productDiscountRegister("discount")}
+                className="w-full p-2 border rounded"
+              />
+              <label className="block mt-2 text-sm text-gray-500">If a discount already exists, remove it first before applying the new one.</label>
+            </div>
+          <button
+            type="submit"
+            className={`${product?.discount ? "bg-red-100 hover:bg-red-100" : "bg-red-400 hover:bg-red-500" }  text-white py-2 px-4 rounded`}
+            disabled={product?.discount}
+          >
+            Save Discount
+          </button>
+          <button 
+            className="ml-3 bg-indigo-400 hover:bg-indigo-500  text-white py-2 px-4 rounded"
+            onClick={handleRemoveProductDiscount}
+          >
+            Remove Discount
           </button>
         </form>
       </div>

@@ -109,6 +109,21 @@ class AdminService {
         };
     }
 
+    updateProductsDiscount(productid, {discount}){
+        return {
+            urlPath: `${config.backendUrl}/admin/product/${productid}/discount`,
+            method: "patch",
+            data: {discount},
+        };
+    }
+
+    removeProductsDiscount(productid){
+        return {
+            urlPath: `${config.backendUrl}/admin/product/${productid}/discount`,
+            method: "delete",
+        };
+    }
+
     // Admin Categories Services
     createCategory(data){
         return {
