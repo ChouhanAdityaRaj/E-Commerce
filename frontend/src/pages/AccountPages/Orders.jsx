@@ -39,7 +39,7 @@ function Orders() {
         return (
         <div className="container mx-auto px-4 py-8 pt-16 min-h-screen">
             <h1 className="text-2xl lg:text-4xl font-bold mb-6 text-center">
-                Your Orders
+                {response.data?.length ? "Your Orders" : "You don't have any orders yet"}
             </h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {response.data?.map((order) => (
