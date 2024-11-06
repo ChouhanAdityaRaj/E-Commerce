@@ -33,6 +33,7 @@ const signup = asyncHandler(async (req, res) => {
   );
 
   const options = {
+    sameSite: 'None',
     httpOnly: true,
     secure: true,
   };
@@ -74,6 +75,7 @@ const login = asyncHandler(async (req, res) => {
   );
 
   const options = {
+    sameSite: 'None',
     httpOnly: true,
     secure: true,
   };
@@ -93,6 +95,7 @@ const logout = asyncHandler(async (req, res) => {
   });
 
   const options = {
+    sameSite: 'None',
     httpOnly: true,
     secure: true,
   };
