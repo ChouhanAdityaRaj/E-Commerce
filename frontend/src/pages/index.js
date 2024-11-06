@@ -24,7 +24,7 @@ import OrdersList from "./admin/OrdersList";
 import OrderInfo from "./admin/OrderInfo";
 import Banners from "./admin/Banners";
 import CreateBanner from "./admin/CreateBanner";
-import UpdateBanner from "./admin/UpdateBAnner";
+import UpdateBanner from "./admin/UpdateBanner";
 import AddressSelect from "./AddressSelect";
 
 export {
