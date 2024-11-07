@@ -32,7 +32,15 @@ const signup = asyncHandler(async (req, res) => {
     user?._id
   );
 
-  const options = {
+  const accessTokenOptions = {
+    maxAge: process.env.ACCESS_TOKEN_COOKIE_EXPIRY,
+    sameSite: 'None',
+    httpOnly: true,
+    secure: true,
+  };
+  
+  const refresTokenOptions = {
+    maxAge: process.env.REFRESH_TOKEN_COOKIE_EXPIRY,
     sameSite: 'None',
     httpOnly: true,
     secure: true,
@@ -40,8 +48,8 @@ const signup = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, accessTokenOptions)
+    .cookie("refreshToken", refreshToken, refresTokenOptions)
     .json(
       new ApiResponse(
         201,
@@ -74,7 +82,15 @@ const login = asyncHandler(async (req, res) => {
     "-password -refreshToken -isBlacklist -isAdmin"
   );
 
-  const options = {
+  const accessTokenOptions = {
+    maxAge: process.env.ACCESS_TOKEN_COOKIE_EXPIRY,
+    sameSite: 'None',
+    httpOnly: true,
+    secure: true,
+  };
+  
+  const refresTokenOptions = {
+    maxAge: process.env.REFRESH_TOKEN_COOKIE_EXPIRY,
     sameSite: 'None',
     httpOnly: true,
     secure: true,
@@ -82,8 +98,8 @@ const login = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, accessTokenOptions)
+    .cookie("refreshToken", refreshToken, refresTokenOptions)
     .json(new ApiResponse(200, loggedInUser, "User Logged In Successfully"));
 });
 
@@ -133,15 +149,24 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     user._id
   );
 
-  const options = {
+  const accessTokenOptions = {
+    maxAge: process.env.ACCESS_TOKEN_COOKIE_EXPIRY,
+    sameSite: 'None',
+    httpOnly: true,
+    secure: true,
+  };
+  
+  const refresTokenOptions = {
+    maxAge: process.env.REFRESH_TOKEN_COOKIE_EXPIRY,
+    sameSite: 'None',
     httpOnly: true,
     secure: true,
   };
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, accessTokenOptions)
+    .cookie("refreshToken", refreshToken, refresTokenOptions)
     .json(new ApiResponse(200, {}, "Access Token Refreshed Successfully"));
 });
 

@@ -167,7 +167,7 @@ function ReviewList({ productid, limit, page, sortBy, sortType, isFilterRequired
     const product = productResponse.data;
 
     return (
-      <div className="w-[100%] flex justify-center">
+      <div className="w-[100%] flex justify-center pt-10 min-h-screen">
         <div className="w-[95%] lg:w-[90%] p-4 md:p-8 bg-white border-t border-gray-200">
         {errorAlertMessage && (<MessageAlert message={errorAlertMessage} handleMessage={() => setErrorAlertMessage("")}/>)}
         {responseAlertMessage && (<MessageAlert message={responseAlertMessage} isError={false} handleMessage={() => setResponseAlertMessage("")}/>)}

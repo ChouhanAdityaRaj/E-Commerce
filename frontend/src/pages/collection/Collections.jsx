@@ -3,7 +3,7 @@ import { Collection, Slider } from "../../components"
 
 function Collections() {
   return (
-    <div className='w-full h-full'>
+    <div className='w-full min-h-screen'>
       <Slider/>
       <Collection/>
     </div>
