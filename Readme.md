@@ -52,6 +52,8 @@ Our E-Commerce platform, developed with the MERN stack (MongoDB, Express.js, Rea
      REFRESH_TOKEN_EXPIRY = ****
      RAZORPAY_ID_KEY = ****
      RAZORPAY_SECRET_KEY = ****
+     ACCESS_TOKEN_COOKIE_EXPIRY = ****  (in milliseconds )
+     REFRESH_TOKEN_COOKIE_EXPIRY = **** (in milliseconds )
      ```
 
    - Create a .env file in the frontend folder with the following variables
