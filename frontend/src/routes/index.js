@@ -10,6 +10,7 @@ import ReviewRoutes from "./ReviewRoutes";
 import AdminRoutes from "./AdminRoutes";
 import BannerRoutes from "./BannerRoutes";
 import PlaceOrderRoutes from "./PlaceOrderRoutes";
+import NotFoundRoutes from "./NotFoundRoutes";
 
 
 const router = createBrowserRouter([
@@ -23,7 +24,8 @@ const router = createBrowserRouter([
     ...ReviewRoutes,
     ...AdminRoutes,
     ...BannerRoutes,
-    ...PlaceOrderRoutes
+    ...PlaceOrderRoutes,
+    ...NotFoundRoutes
 ]);
 
 export default router;

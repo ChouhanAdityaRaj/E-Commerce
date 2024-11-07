@@ -13,6 +13,7 @@ function Header() {
   const [isAccountSidebarOpen, setIsAccountSidebarOpen] = useState(false);
 
   useEffect(() => {
+    setIsOpen(false)
     const activeHeaderOn = ["/", "/collections"]; 
     if(!activeHeaderOn.includes(window.location.pathname)){
       setNavBackground(true);

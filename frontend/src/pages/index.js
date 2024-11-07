@@ -26,6 +26,7 @@ import Banners from "./admin/Banners";
 import CreateBanner from "./admin/CreateBanner";
 import UpdateBanner from "./admin/UpdateBanner";
 import AddressSelect from "./AddressSelect";
+import NotFound from "./NotFound";
 
 export {
     Login,
@@ -56,4 +57,5 @@ export {
     CreateBanner,
     UpdateBanner,
     AddressSelect,
+    NotFound
 }
