@@ -28,7 +28,7 @@ class User{
 
     addAddress({mobileNumber, pinCode, state, city, address}){
         return {
-            urlPath: `${config.backendUrl}/address/`,
+            urlPath: `${config.backendUrl}/address`,
             method: "post",
             data: {
                 mobileNumber,

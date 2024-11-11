@@ -43,7 +43,7 @@ class Product{
     //Category
     getAllCategories(){
         return {
-            urlPath: `${config.backendUrl}/category/`,
+            urlPath: `${config.backendUrl}/category`,
         };
     }
 

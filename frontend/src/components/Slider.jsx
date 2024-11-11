@@ -44,7 +44,7 @@ if(response){
                 alt={`Slide ${index + 1}`}
                 className="w-full h-full object-cover"
                 />
-              <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white p-2 rounded-md text-sm sm:text-base md:text-lg">
+              <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white p-2 rounded-md text-sm sm:text-base md:text-5xl">
                 {banner.title}
               </div>
             </Link>

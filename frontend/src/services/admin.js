@@ -127,7 +127,7 @@ class AdminService {
     // Admin Categories Services
     createCategory(data){
         return {
-            urlPath: `${config.backendUrl}/admin/category/`,
+            urlPath: `${config.backendUrl}/admin/category`,
             method: "post",
             data,
             isFormData: true

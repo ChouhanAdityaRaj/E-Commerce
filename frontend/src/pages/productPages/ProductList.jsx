@@ -56,7 +56,7 @@ function ProductList() {
 
   if (response) {
     return (
-      <div className="pt-7">
+      <div className="pt-7 min-h-screen">
 
         {/* Filter */}
         <div className="relative">
