@@ -8,7 +8,7 @@ const router = Router();
 
 router.use(verifyJWT);
 
-router.route("/u").get(getUserCartInfo)
+router.route("/user").get(getUserCartInfo)
 router.route("/p/:productid").post(validate(addToCartSchema), addToCart);
 router.route("/:cartid/i/:itemid").patch(validate(updatecartItemSchematSchema), updateCartItem);
 router.route("/:cartid/i/:itemid").delete(removeCartItem);

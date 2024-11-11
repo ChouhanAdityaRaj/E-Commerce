@@ -100,14 +100,14 @@ class User{
 
     getUserCartInfo(){
         return {
-            urlPath: `${config.backendUrl}/cart/u`,
+            urlPath: `${config.backendUrl}/cart/user`,
         }
     }
 
     //Orders
     getUserOrdersOverview(){
         return {
-            urlPath: `${config.backendUrl}/order/u`,
+            urlPath: `${config.backendUrl}/order/user`,
         }
     }
 

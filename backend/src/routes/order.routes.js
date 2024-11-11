@@ -8,7 +8,7 @@ const router = Router();
 router.use(verifyJWT);
 
 router.route("/c/:cartid/a/:addressid").post(createOrder);
-router.route("/u").get(getUserOrdersOverview);
+router.route("/user").get(getUserOrdersOverview);
 router.route("/:orderid").delete(cancelOrder);
 router.route("/:orderid").get(getOrderById);
 
