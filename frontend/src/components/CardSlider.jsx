@@ -9,7 +9,7 @@ function CardSlider() {
   const slides = [
     {
       id: "1",
-      title: "New Arivel First",
+      title: "New Arrival First",
       image: newArrivalImage,
       activeStatus: true,
       path: "/product?search=&sortBy=date&sortType=-1"
