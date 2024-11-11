@@ -60,7 +60,7 @@ function AccountNavSidebar({ isAccountSidebarOpen, setIsAccountSidebarOpen }) {
 
   return (
     <div
-      className={`absolute left-0  w-56 border-t   bg-white  shadow-lg text-black transform transition-transform duration-300 ease-in-out
+      className={`absolute left-0  w-56 border-t   bg-white  shadow-lg text-black transform transition-transform duration-500 ease-in-out
       ${
         isAccountSidebarOpen
           ? "translate-x-0 opacity-100"
