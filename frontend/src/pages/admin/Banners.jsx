@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {FaEdit, FaTrash } from "react-icons/fa";
 import { apiHandler } from "../../utils";
-import productService from "../../services/product";
 import adminService from "../../services/admin";
 import { ErrorMessage, Loader, MessageAlert } from "../../components";
 import { Link } from "react-router-dom";
@@ -20,7 +19,7 @@ function Banners() {
           setError("");
           setLoading(true);
           const [response, error] = await apiHandler(
-            productService.getAllBanners()
+            adminService.adminGetAllBanners()
           );
     
           if (response) {

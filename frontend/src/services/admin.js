@@ -203,6 +203,12 @@ class AdminService {
 
 
     //Banner
+    adminGetAllBanners(){
+        return {
+            urlPath: `${config.backendUrl}/admin/banner`,
+        }
+    }
+
     createBanner(data){
         return {
             urlPath: `${config.backendUrl}/admin/banner`,

@@ -8,6 +8,11 @@ const getAllBanners = asyncHandler(async (req, res) => {
 
     const banners = await Banner.aggregate([
         {
+            $match: {
+                isActive: true
+            }
+        },
+        {
             $project: {
                 title: 1,
                 image: 1,

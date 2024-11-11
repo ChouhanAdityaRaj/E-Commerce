@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { verifyIsAdmin, getAllUser, addNewProduct, updateProductDetails, updateProductImage, addOtherProductImages, deleteOtherProductImage, updateStock, updateProductCategory, deleteProduct, addDiscount, removeDiscount, createCategory, updateCategor, updateCategoryImage, deleteCategory, getAllOrders, getOrderById, updateOrderStatus, createBanner, deleteBanner, addProductsToBanner, updateBannerDetails, updateBannerImage } from "../controllers/admin.controller.js";
+import { verifyIsAdmin, getAllUser, addNewProduct, updateProductDetails, updateProductImage, addOtherProductImages, deleteOtherProductImage, updateStock, updateProductCategory, deleteProduct, addDiscount, removeDiscount, createCategory, updateCategor, updateCategoryImage, deleteCategory, getAllOrders, getOrderById, updateOrderStatus, getAllBanners, createBanner, deleteBanner, addProductsToBanner, updateBannerDetails, updateBannerImage } from "../controllers/admin.controller.js";
 import { verifyAdmin } from "../middlewares/verifyAdmin.middleware.js";
 import { addNewProductSchema, updateProductDetailsSchema, updateStockSchema, addDiscountSchema, createCategorySchema, updateCategorySchema, updateOrderStatusSchema, updateBannerDetailsSchema} from "../validations/admin.schema.js";
 import { validate } from "../middlewares/validate.middleware.js";
@@ -56,6 +56,7 @@ router.route("/orders/:orderid").get(getOrderById);
 router.route("/orders/:orderid/status").patch(validate(updateOrderStatusSchema), updateOrderStatus);
 
 //Admin Banner Routes
+router.route("/banner").get(getAllBanners);
 router.route("/banner").post(upload.single("bannerImage"), createBanner);
 router.route("/banner/:bannerid").delete(deleteBanner);
 router.route("/banner/:bannerid/products").patch(addProductsToBanner);

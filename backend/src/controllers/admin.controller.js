@@ -816,6 +816,32 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
 })
 
 //Admin Banner Controller
+
+const getAllBanners = asyncHandler(async (req, res) => {
+  const banners = await Banner.aggregate([
+    {
+        $project: {
+            title: 1,
+            image: 1,
+            isActive: 1,
+            createdAt: 1
+        }
+    }
+])
+
+if (!banners) {
+    throw new ApiError(500, "Problem while fetching banners");
+}
+
+return res
+    .status(200)
+    .json(new ApiResponse(
+        200,
+        banners,
+        "Banners fetched successfully"
+    ))
+})
+
 const createBanner = asyncHandler(async (req, res) => {
   const {title, isActive, products} =  req.body;
 
@@ -1048,6 +1074,7 @@ export {
   updateOrderStatus,
 
   //Banner exports
+  getAllBanners,
   createBanner,
   deleteBanner,
   addProductsToBanner,

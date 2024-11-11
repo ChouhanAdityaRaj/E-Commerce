@@ -174,8 +174,8 @@ function UpdateBanner() {
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value={banner.isActive} hidden>{banner.isActive ? "True" : "False"}</option>
-                <option hidden={banner.isActive === true} value={true}>True</option>
-                <option hidden={banner.isActive === false} value={false}>False</option>
+                <option className={`${banner.isActive === true && 'bg-gray-300'}`} value={true}>True</option>
+                <option className={`${banner.isActive === false && 'bg-gray-300'}`} value={false}>False</option>
               </select>
             </div>
           </div>
