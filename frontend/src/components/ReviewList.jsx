@@ -62,6 +62,7 @@ function ReviewList({ productid, limit, page, sortBy, sortType, isFilterRequired
     }
     if(filter === "Oldest first"){
       setSortByFilter("createdAt");
+      
       setSortTypeFilter(1);
     }
 
