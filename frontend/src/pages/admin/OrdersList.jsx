@@ -117,7 +117,7 @@ function OrdersList() {
                   <tr key={order._id} onClick={() => navigate(`/admin/orders/${order._id}`)} className="hover:bg-gray-100">
                     <td className="py-2 px-4 border-b">{order.user.fullName}</td>
                     <td className="py-2 px-4 border-b">{order.orderStatus}</td>
-                    <td className="py-2 px-4 border-b">{order.address.state}</td>
+                    <td className="py-2 px-4 border-b">{order.address?.state}</td>
                     <td className="py-2 px-4 border-b">{DateTimeFormate(order.createdAt)}</td>
                   </tr>
               ))}
