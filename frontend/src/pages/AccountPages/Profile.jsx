@@ -197,6 +197,7 @@ function Profile() {
               <div className="mb-4">
                 <label className="block text-gray-700 lg:text-3xl">Full Name</label>
                 <input
+                  defaultValue={response.fullName}
                   type="text"
                   className="w-full p-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-beige lg:h-[5vh]"
                   {...register("fullName", {
