@@ -57,11 +57,11 @@ function ReviewList({ productid, limit, page, sortBy, sortType, isFilterRequired
       setSortTypeFilter(1);
     }
     if(filter === "Recent first"){
-      setSortByFilter("date");
+      setSortByFilter("createdAt");
       setSortTypeFilter(-1);
     }
     if(filter === "Oldest first"){
-      setSortByFilter("date");
+      setSortByFilter("createdAt");
       setSortTypeFilter(1);
     }
 
